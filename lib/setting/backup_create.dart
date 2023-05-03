@@ -3,7 +3,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_archive/flutter_archive.dart';
+import 'package:flutter_archive/flutter_archive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -155,16 +155,16 @@ class BackupCreate extends HookConsumerWidget {
       files.add(File(fileEntityO[iO].path));
       print("${iO + 1}番目のファイルをzip");
     }
-    // try {
-    //   final zipFile = File(externalZipPath!);
-    //   await ZipFile.createFromFiles(
-    //       sourceDir: sourceDir, files: files, zipFile: zipFile);//,zipUri:zipUri);
-    // } catch (e) {
-    //   ref
-    //       .watch(logProvider.notifier)
-    //       .state = 'Failed to make zip';
-    //   print(e);
-    // }
+    try {
+      final zipFile = File(externalZipPath!);
+      await ZipFile.createFromFiles(
+          sourceDir: sourceDir, files: files, zipFile: zipFile);//,zipUri:zipUri);
+    } catch (e) {
+      ref
+          .watch(logProvider.notifier)
+          .state = 'Failed to make zip';
+      print(e);
+    }
 
     ref
         .watch(logProvider.notifier)

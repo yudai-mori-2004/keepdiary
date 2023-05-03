@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_archive/flutter_archive.dart';
+import 'package:flutter_archive/flutter_archive.dart';
 import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:keep_diary/structure/data_structure.dart';
@@ -121,49 +121,49 @@ class BackupRestore extends HookConsumerWidget {
           .watch(logProvider.notifier)
           .state = 'No file selected.';
     }else{
-      // final zipFile = File(importFileData.files.single.path!);
-      // final destinationDir = Directory(localPath);
-      // try {
-      //   await ZipFile.extractToDirectory(zipFile: zipFile, destinationDir: destinationDir);
-      //   await dataBox.close();
-      //   await Hive.openBox(dataBoxName);
-      //   dataBox = Hive.box<dynamic>(dataBoxName);
-      //   print('datalength ${data.year.length} $leaveCur');
-      //   if (leaveCur) {
-      //     Data d = dataBox.get(dataBoxName, defaultValue: Data.empty());
-      //     for (int i = 0; i < data.year.length; i++) {
-      //       d.addDiary(
-      //           data.year[i],
-      //           data.month[i],
-      //           data.day[i],
-      //           data.date[i],
-      //           data.height[i],
-      //           data.title[i],
-      //           data.text[i],
-      //           data.image[i]);
-      //     }
-      //     data = d;
-      //     dataBox.put(dataBoxName, data);
-      //   } else {
-      //     data = dataBox.get(dataBoxName, defaultValue: Data.empty());
-      //     dataBox.put(dataBoxName, data);
-      //   }
-      //
-      //   await settingDataBox.close();
-      //   await Hive.openBox<SettingData>(settingDataBoxName);
-      //   settingDataBox = Hive.box<SettingData>(settingDataBoxName);
-      //   settingData = settingDataBox.get(settingDataBoxName, defaultValue: SettingData.empty());
-      //   settingDataBox.put(settingDataBoxName, settingData);
-      //
-      //   ref
-      //       .watch(logProvider.notifier)
-      //       .state = '${textString?.restart}';
-      // } catch (e) {
-      //   ref
-      //       .watch(logProvider.notifier)
-      //       .state = 'Failed to restore.';
-      //   print(e);
-      // }
+      final zipFile = File(importFileData.files.single.path!);
+      final destinationDir = Directory(localPath);
+      try {
+        await ZipFile.extractToDirectory(zipFile: zipFile, destinationDir: destinationDir);
+        await dataBox.close();
+        await Hive.openBox(dataBoxName);
+        dataBox = Hive.box<dynamic>(dataBoxName);
+        print('datalength ${data.year.length} $leaveCur');
+        if (leaveCur) {
+          Data d = dataBox.get(dataBoxName, defaultValue: Data.empty());
+          for (int i = 0; i < data.year.length; i++) {
+            d.addDiary(
+                data.year[i],
+                data.month[i],
+                data.day[i],
+                data.date[i],
+                data.height[i],
+                data.title[i],
+                data.text[i],
+                data.image[i]);
+          }
+          data = d;
+          dataBox.put(dataBoxName, data);
+        } else {
+          data = dataBox.get(dataBoxName, defaultValue: Data.empty());
+          dataBox.put(dataBoxName, data);
+        }
+
+        await settingDataBox.close();
+        await Hive.openBox<SettingData>(settingDataBoxName);
+        settingDataBox = Hive.box<SettingData>(settingDataBoxName);
+        settingData = settingDataBox.get(settingDataBoxName, defaultValue: SettingData.empty());
+        settingDataBox.put(settingDataBoxName, settingData);
+
+        ref
+            .watch(logProvider.notifier)
+            .state = '${textString?.restart}';
+      } catch (e) {
+        ref
+            .watch(logProvider.notifier)
+            .state = 'Failed to restore.';
+        print(e);
+      }
     }
   }
 }

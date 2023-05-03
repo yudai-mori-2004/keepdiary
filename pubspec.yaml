@@ -1,0 +1,164 @@
+name: keep_diary
+description: A new Flutter project.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=2.19.3 <3.0.0'
+
+dependencies:
+  dart_openai: ^1.9.6
+  flutter:
+    sdk: flutter
+  flutter_dotenv: ^5.0.2
+  flutter_hooks: ^0.18.6
+  hooks_riverpod: ^2.3.0
+  fluttertoast: ^8.2.1
+  passcode_screen: ^2.0.1
+  riverpod_annotation: ^2.0.0
+  visibility_detector: ^0.3.3
+  shared_preferences: ^2.0.20
+  scrollable_positioned_list: ^0.3.5
+  image_picker: ^0.8.5+3
+  flutter_colorpicker: ^1.0.3
+  photo_view: ^0.14.0
+  html: ^0.15.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  settings_ui: ^2.0.2
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.17.0
+  country_picker: ^2.0.20
+  flutter_local_notifications: ^14.0.0+1
+  flutter_native_timezone: ^2.0.0
+  flutter_email_sender: ^5.2.0
+  path_provider: ^2.0.14
+  file_picker: ^5.2.11
+  permission_handler: ^10.2.0
+  external_path: ^1.0.3
+  device_info_plus: ^8.2.2
+  google_mobile_ads: ^3.0.0
+#  flutter_archive:
+#    path: ./custom_plugins/flutter_archive-5.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  riverpod_lint: ^1.1.2
+  hive_generator: ^2.0.0
+  custom_lint: ^0.3.3
+  riverpod_generator: ^2.0.0
+  flutter_launcher_icons: ^0.13.0
+  build_runner: ^2.3.3
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/diary_icon_ios.png"
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - .env
+    - assets/
+    - assets/appbarDefault/appBarImage0.png
+    - assets/appbarDefault/appBarImage1.png
+    - assets/appbarDefault/appBarImage2.png
+    - assets/appbarDefault/appBarImage3.png
+    - assets/appbarDefault/appBarImage4.png
+    - assets/appbarDefault/appBarImage5.png
+
+  fonts:
+    - family: f0
+      fonts:
+        - asset: assets/fonts/0/ZenMaruGothic-Regular.ttf
+          weight: 200
+
+    - family: f1
+      fonts:
+        - asset: assets/fonts/1/ZenOldMincho-Medium.ttf
+          weight: 200
+
+    - family: f2
+      fonts:
+        - asset: assets/fonts/2/ZenKurenaido-Regular.ttf
+          weight: 100
+
+    - family: f3
+      fonts:
+        - asset: assets/fonts/3/DotGothic16-Regular.ttf
+          weight: 100
+
+    - family: f4
+      fonts:
+        - asset: assets/fonts/4/HachiMaruPop-Regular.ttf
+          weight: 100
+
+    - family: f5
+      fonts:
+        - asset: assets/fonts/5/HinaMincho-Regular.ttf
+          weight: 100
+
+    - family: f6
+      fonts:
+        - asset: assets/fonts/6/KaiseiDecol-Medium.ttf
+          weight: 200
+
+    - family: f7
+      fonts:
+        - asset: assets/fonts/7/KaiseiHarunoUmi-Medium.ttf
+          weight: 200
+
+    - family: f8
+      fonts:
+        - asset: assets/fonts/8/KiwiMaru-Regular.ttf
+          weight: 200
+
+    - family: f9
+      fonts:
+        - asset: assets/fonts/9/NotoSerifJP-Regular.otf
+          weight: 200
+
+    - family: f10
+      fonts:
+        - asset: assets/fonts/10/MPLUS1Code-Regular.ttf
+          weight: 200
+
+    - family: f11
+      fonts:
+        - asset: assets/fonts/11/KleeOne-Regular.ttf
+          weight: 100
+
+    - family: f12
+      fonts:
+        - asset: assets/fonts/12/MPLUSRounded1c-Regular.ttf
+          weight: 200
+
+    - family: f13
+      fonts:
+        - asset: assets/fonts/13/NotoSansJP-Regular.otf
+          weight: 200
+
+    - family: f14
+      fonts:
+        - asset: assets/fonts/14/ReggaeOne-Regular.ttf
+          weight: 100
+
+    - family: f15
+      fonts:
+        - asset: assets/fonts/15/RocknRollOne-Regular.ttf
+          weight: 100
+
+    - family: f16
+      fonts:
+        - asset: assets/fonts/16/YujiBoku-Regular.ttf
+          weight: 100
+
+    - family: f17
+      fonts:
+        - asset: assets/fonts/17/YuseiMagic-Regular.ttf
+          weight: 100
+

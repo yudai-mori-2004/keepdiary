@@ -1,0 +1,308 @@
+{
+  "@@locale": "en",
+
+  "diary": "Diary",
+  "@rate": {
+    "description": "rate title label"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "rate title label"
+  },
+  "general": "General",
+  "@general": {
+    "description": "rate title label"
+  },
+  "notification": "Notification",
+  "@notification": {
+    "description": "rate title label"
+  },
+  "lock": "Diary Lock",
+  "@lock": {
+    "description": "rate title label"
+  },
+  "date_update_time": "Date Update Time",
+  "@date_update_time": {
+    "description": "rate title label"
+  },
+  "backup": "Backup",
+  "@backup": {
+    "description": "rate title label"
+  },
+  "design": "Design",
+  "@design": {
+    "description": "rate title label"
+  },
+  "app_bar_background": "AppBar background",
+  "@app_bar_background": {
+    "description": "rate title label"
+  },
+  "app_bar_color": "AppBar text color",
+  "@app_bar_color": {
+    "description": "rate title label"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "rate title label"
+  },
+  "font": "Font",
+  "@font": {
+    "description": "rate title label"
+  },
+  "format_of_week": "Format of week",
+  "@format_of_week": {
+    "description": "rate title label"
+  },
+  "format_of_date": "Format of date",
+  "@format_of_date": {
+    "description": "rate title label"
+  },
+  "this_font": "This font",
+  "@this_font": {
+    "description": "rate title label"
+  },
+  "font_ex": "The play begins with the Prologue in Heaven. In an allusion to the story of Job, Mephistopheles wagers with God for the soul of Faust.",
+  "@font_ex": {
+    "description": "rate title label"
+  },
+  "theme1": "Background color",
+  "@theme1": {
+    "description": "rate title label"
+  },
+  "theme2": "Button, Search bar",
+  "@theme2": {
+    "description": "rate title label"
+  },
+  "theme3": "Icon, Date",
+  "@theme3": {
+    "description": "rate title label"
+  },
+  "theme4": "List text",
+  "@theme4": {
+    "description": "rate title label"
+  },
+  "theme5": "Text color",
+  "@theme5": {
+    "description": "rate title label"
+  },
+  "theme6": "Accent",
+  "@theme6": {
+    "description": "rate title label"
+  },
+  "text_size": "Font size",
+  "@text_size": {
+    "description": "rate title label"
+  },
+  "text_size_list": "List font size",
+  "@text_size_list": {
+    "description": "rate title label"
+  },
+  "text_size_diary": "Diary font size",
+  "@text_size_diary": {
+    "description": "rate title label"
+  },
+  "list_max_lines": "List max lines",
+  "@list_max_lines": {
+    "description": "rate title label"
+  },
+  "list_height": "List height",
+  "@list_height": {
+    "description": "rate title label"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "rate title label"
+  },
+  "title_hint": "Title",
+  "@title_hint": {
+    "description": "rate title label"
+  },
+  "text_hint": "Text",
+  "@text_hint": {
+    "description": "rate title label"
+  },
+  "delete": "Do you really want to delete this diary?",
+  "@delete": {
+    "description": "rate title label"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "rate title label"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "rate title label"
+  },
+  "newest": "This diary is the latest",
+  "@newest": {
+    "description": "rate title label"
+  },
+  "oldest": "This diary is the oldest",
+  "@oldest": {
+    "description": "rate title label"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "rate title label"
+  },
+  "write": "Write a diary",
+  "@write": {
+    "description": "rate title label"
+  },
+  "auto_diary": "Automatic Diary Writing",
+  "@auto_diary": {
+    "description": "rate title label"
+  },
+  "auto_diary_desc": "Write down a list of what happened today",
+  "@auto_diary_desc": {
+    "description": "rate title label"
+  },
+  "gpt_write": "Write automatically\n[Ad will be played]",
+  "@gpt_write": {
+    "description": "rate title label"
+  },
+  "empty": "Please write down a list of what happened today",
+  "@empty": {
+    "description": "rate title label"
+  },
+  "replace": "Replace",
+  "@replace": {
+    "description": "rate title label"
+  },
+  "add": "Add",
+  "@add": {
+    "description": "rate title label"
+  },
+  "replace_warn": "The original diary will be lost, is that OK?",
+  "@replace_warn": {
+    "description": "rate title label"
+  },
+  "no": "No",
+  "@no": {
+    "description": "rate title label"
+  },
+  "back": "Do you want to save changes?",
+  "@back": {
+    "description": "rate title label"
+  },
+  "self": "Self introduction",
+  "@self": {
+    "description": "rate title label"
+  },
+  "self_desc": "Introduce yourself to chatGPT, ex:19-year-old college student",
+  "@self_desc": {
+    "description": "rate title label"
+  },
+  "input_pass": "Enter your passcode?",
+  "@input_pass": {
+    "description": "rate title label"
+  },
+  "confirm_pass": "Please enter your password again to be sure.",
+  "@confirm_pass": {
+    "description": "rate title label"
+  },
+  "invalid_pass": "Password does not match\nIf you forget your password, you will not be able to open your diary.",
+  "@invalid_pass": {
+    "description": "rate title label"
+  },
+  "free_lock": "Disable locks",
+  "@free_lock": {
+    "description": "rate title label"
+  },
+  "backup_attention": "Be careful not to close the application during backup!",
+  "@backup_attention": {
+    "description": "rate title label"
+  },
+  "backup_attention2": "Select the zip file starting with \"DiaryBackup\"",
+  "@backup_attention2": {
+    "description": "rate title label"
+  },
+  "backup_google": "Backup as Zip file",
+  "@backup_google": {
+    "description": "rate title label"
+  },
+  "restore_google": "Restore your diary from Zip file",
+  "@restore_google": {
+    "description": "rate title label"
+  },
+  "restore": "Restore",
+  "@restore": {
+    "description": "rate title label"
+  },
+  "backed": "Completed backup of all files. The data is in your Download folder.",
+  "@backed": {
+    "description": "rate title label"
+  },
+  "delete_restore": "Delete the diary of this device and restore the data.",
+  "@delete_restore": {
+    "description": "rate title label"
+  },
+  "leave_restore": "Keep a diary of this device and restore data",
+  "@leave_restore": {
+    "description": "rate title label"
+  },
+  "account": "Google Account",
+  "@account": {
+    "description": "rate title label"
+  },
+  "account_set": "Google Account setting",
+  "@account_set": {
+    "description": "rate title label"
+  },
+  "account_init": "Since you need to initialize your authentication information, please return to the screen to set up your account.",
+  "@account_init": {
+    "description": "rate title label"
+  },
+  "allow_drive": "Please allow the use of GoogleDrive for backup",
+  "@allow_drive": {
+    "description": "rate title label"
+  },
+  "restart": "Data recovery is complete. Please restart the application.",
+  "@restart": {
+    "description": "rate title label"
+  },
+  "ad_failed": "Ad failed to load",
+  "@ad_failed": {
+    "description": "rate title label"
+  },
+  "time_for_diary": "It's time for your diary.",
+  "@time_for_diary": {
+    "description": "rate title label"
+  },
+  "restore_yourself": "How was your day today?",
+  "@restore_yourself": {
+    "description": "rate title label"
+  },
+  "failed_to_signin": "Failed to sign in.",
+  "@failed_to_signin": {
+    "description": "rate title label"
+  },
+  "no_backup": "There is no backup on Google Drive.",
+  "@no_backup": {
+    "description": "rate title label"
+  },
+  "mail": "Please feel free to send us any ideas for improving the application or any problems you may have.",
+  "@mail": {
+    "description": "rate title label"
+  },
+  "mail_setting": "Idea box",
+  "@mail_setting": {
+    "description": "rate title label"
+  },
+  "others": "others",
+  "@others": {
+    "description": "rate title label"
+  },
+  "title_mail": "Title",
+  "@title_mail": {
+    "description": "rate title label"
+  },
+  "content_mail": "Contents",
+  "@content_mail": {
+    "description": "rate title label"
+  },
+  "send": "Send",
+  "@send": {
+    "description": "rate title label"
+  }
+}

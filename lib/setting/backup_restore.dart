@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_archive/flutter_archive.dart';
@@ -9,11 +8,8 @@ import 'package:keep_diary/structure/setting_data_structure.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
-import 'package:path/path.dart';
 import '../../main.dart';
-import '../../screen/settings_screen.dart';
 import '../helper/file_helper.dart';
-import 'backup_create.dart';
 
 final StateProvider<String>logProvider=StateProvider((ref) => '');
 

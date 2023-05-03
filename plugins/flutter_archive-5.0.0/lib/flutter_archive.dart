@@ -61,10 +61,11 @@ class ZipFile {
   /// [ZipFileOperation.cancel] - cancel the operation
   static Future<void> createFromDirectory(
       {required Directory sourceDir,
-      required File zipFile,
-      bool includeBaseDirectory = false,
-      bool recurseSubDirs = true,
-      OnZipping? onZipping}) async {
+        required File zipFile,
+        String? zipUri,
+        bool includeBaseDirectory = false,
+        bool recurseSubDirs = true,
+        OnZipping? onZipping}) async {
     final reportProgress = onZipping != null;
     if (reportProgress) {
       if (!_isMethodCallHandlerSet) {
@@ -81,6 +82,7 @@ class ZipFile {
       await _channel.invokeMethod<void>('zipDirectory', <String, dynamic>{
         'sourceDir': sourceDir.path,
         'zipFile': zipFile.path,
+        'zipUri':zipUri,
         'recurseSubDirs': recurseSubDirs,
         'includeBaseDirectory': includeBaseDirectory,
         'reportProgress': reportProgress,
@@ -102,10 +104,11 @@ class ZipFile {
     required Directory sourceDir,
     required List<File> files,
     required File zipFile,
+    String? zipUri,
     bool includeBaseDirectory = false,
   }) async {
     var sourceDirPath =
-        includeBaseDirectory ? sourceDir.parent.path : sourceDir.path;
+    includeBaseDirectory ? sourceDir.parent.path : sourceDir.path;
     if (!sourceDirPath.endsWith(Platform.pathSeparator)) {
       sourceDirPath += Platform.pathSeparator;
     }
@@ -125,6 +128,7 @@ class ZipFile {
       'sourceDir': sourceDir.path,
       'files': relativeFilePaths,
       'zipFile': zipFile.path,
+      'zipUri':zipUri,
       'includeBaseDirectory': includeBaseDirectory
     });
   }
@@ -192,7 +196,7 @@ class ZipFile {
         final onZippingHandler = _onZippingHandlerByJobId[jobId];
         if (onZippingHandler != null) {
           final result =
-              onZippingHandler(zipEntry.name, zipEntry.isDirectory, progress);
+          onZippingHandler(zipEntry.name, zipEntry.isDirectory, progress);
           return Future<String>.value(result.name);
         } else {
           return Future<void>.value();

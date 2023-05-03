@@ -5,6 +5,9 @@
 
 package com.kineapps.flutterarchive
 
+import android.app.Activity
+import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -13,6 +16,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -36,9 +41,11 @@ enum class ZipFileOperation { INCLUDE_ITEM, SKIP_ITEM, CANCEL }
 /**
  * FlutterArchivePlugin
  */
-class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler {
+class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler,ActivityAware {
     private var pluginBinding: FlutterPlugin.FlutterPluginBinding? = null
     private var methodChannel: MethodChannel? = null
+
+    private lateinit var context : Context
 
     companion object {
         private const val LOG_TAG = "FlutterArchivePlugin"
@@ -55,6 +62,8 @@ class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler {
 
         val messenger = pluginBinding?.binaryMessenger
         doOnAttachedToEngine(messenger!!)
+
+        context = binding.applicationContext
 
         Log.d(LOG_TAG, "onAttachedToEngine - OUT")
     }
@@ -96,6 +105,7 @@ class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler {
                     try {
                         val sourceDir = call.argument<String>("sourceDir")
                         val zipFile = call.argument<String>("zipFile")
+                        val zipUri=call.argument<String?>("zipUri")
                         val recurseSubDirs = call.argument<Boolean>("recurseSubDirs") == true
                         val includeBaseDirectory =
                             call.argument<Boolean>("includeBaseDirectory") == true
@@ -106,6 +116,7 @@ class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler {
                             zip(
                                 sourceDirPath = sourceDir!!,
                                 zipFilePath = zipFile!!,
+                                zipUri=zipUri,
                                 recurseSubDirs = recurseSubDirs,
                                 includeBaseDirectory = includeBaseDirectory,
                                 reportProgress = reportProgress == true,
@@ -125,11 +136,12 @@ class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler {
                         val sourceDir = call.argument<String>("sourceDir")
                         val files = call.argument<List<String>>("files")
                         val zipFile = call.argument<String>("zipFile")
+                        val zipUri=call.argument<String?>("zipUri")
                         val includeBaseDirectory =
                             call.argument<Boolean>("includeBaseDirectory") == true
 
                         withContext(Dispatchers.IO) {
-                            zipFiles(sourceDir!!, files!!, zipFile!!, includeBaseDirectory)
+                            zipFiles(sourceDir!!, files!!, zipFile!!,zipUri, includeBaseDirectory)
                         }
                         result.success(true)
                     } catch (e: Exception) {
@@ -171,10 +183,27 @@ class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDetachedFromActivity() {
+        TODO("Not yet implemented")
+    }
+
     @Throws(IOException::class)
     private suspend fun zip(
         sourceDirPath: String,
         zipFilePath: String,
+        zipUri: String?,
         recurseSubDirs: Boolean,
         includeBaseDirectory: Boolean,
         reportProgress: Boolean,
@@ -189,6 +218,7 @@ class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler {
             if (includeBaseDirectory) File(sourceDirPath).parentFile else File(sourceDirPath)
 
         val totalFileCount = if (reportProgress) getFilesCount(rootDirectory, recurseSubDirs) else 0
+
 
         withContext(Dispatchers.IO) {
             ZipOutputStream(
@@ -322,6 +352,7 @@ class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler {
         sourceDirPath: String,
         relativeFilePaths: List<String>,
         zipFilePath: String,
+        zipUri:String?,
         includeBaseDirectory: Boolean
     ) {
         Log.i(
@@ -335,21 +366,42 @@ class FlutterArchivePlugin : FlutterPlugin, MethodCallHandler {
         val rootDirectory =
             if (includeBaseDirectory) File(sourceDirPath).parentFile else File(sourceDirPath)
 
-        ZipOutputStream(
-            BufferedOutputStream(
-                FileOutputStream(zipFilePath)
-            )
-        ).use { zipOutputStream ->
-            for (relativeFilePath in relativeFilePaths) {
-                val file = rootDirectory.resolve(relativeFilePath)
-                val cleanedRelativeFilePath = file.relativeTo(rootDirectory).path
-                Log.i("zip", "Adding file: $cleanedRelativeFilePath")
-                FileInputStream(file).use { fileInputStream ->
-                    val entry = ZipEntry(cleanedRelativeFilePath)
-                    entry.time = file.lastModified()
-                    entry.size = file.length()
-                    zipOutputStream.putNextEntry(entry)
-                    fileInputStream.copyTo(zipOutputStream)
+        if(zipUri==null) {
+
+            ZipOutputStream(
+                BufferedOutputStream(
+                    FileOutputStream(zipFilePath)
+                )
+            ).use { zipOutputStream ->
+                for (relativeFilePath in relativeFilePaths) {
+                    val file = rootDirectory.resolve(relativeFilePath)
+                    val cleanedRelativeFilePath = file.relativeTo(rootDirectory).path
+                    Log.i("zip", "Adding file: $cleanedRelativeFilePath")
+                    FileInputStream(file).use { fileInputStream ->
+                        val entry = ZipEntry(cleanedRelativeFilePath)
+                        entry.time = file.lastModified()
+                        entry.size = file.length()
+                        zipOutputStream.putNextEntry(entry)
+                        fileInputStream.copyTo(zipOutputStream)
+                    }
+                }
+            }
+        }else{
+            val uri:Uri=Uri.parse(zipUri)
+            ZipOutputStream(
+                context.contentResolver.openOutputStream(uri)
+            ).use { zipOutputStream ->
+                for (relativeFilePath in relativeFilePaths) {
+                    val file = rootDirectory.resolve(relativeFilePath)
+                    val cleanedRelativeFilePath = file.relativeTo(rootDirectory).path
+                    Log.i("zip", "Adding file: $cleanedRelativeFilePath")
+                    FileInputStream(file).use { fileInputStream ->
+                        val entry = ZipEntry(cleanedRelativeFilePath)
+                        entry.time = file.lastModified()
+                        entry.size = file.length()
+                        zipOutputStream.putNextEntry(entry)
+                        fileInputStream.copyTo(zipOutputStream)
+                    }
                 }
             }
         }

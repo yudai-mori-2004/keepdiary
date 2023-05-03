@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
@@ -107,22 +106,21 @@ class BackupCreate extends HookConsumerWidget {
     String savedPath = "";
     String? externalZipPath="";
     String fileName="DiaryBackup${DateFormat('yyyy-MM-dd-HH-mm-ss').format(DateTime.now())}.zip";
-    Uri? zipUri=null;
+    String? zipUri;
 
     if (Platform.isAndroid) {
       savedPath = await ExternalPath.getExternalStoragePublicDirectory(
           ExternalPath.DIRECTORY_DOWNLOADS);
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      print("version : ${androidInfo.version.sdkInt}");
       if (androidInfo.version.sdkInt >= 30) {
-        zipUri=await OpenDocument.getPath('application/zip', fileName);
-        // File file = File("$savedPath/$fileName");
-        // externalZipPath = file.path;
-        // if(file.existsSync()){
-        //   print("gbrbberbebberbbrOK  :   ${file.path}");
-        // }
-        // print("gbrbberbebberbbr  :   ${file.path}");
+        zipUri = await OpenDocument.getPath('application/zip', fileName);
+        if (zipUri == null) {
+          ref
+              .watch(logProvider.notifier)
+              .state = 'No data';
+          return;
+        }
       }
     } else {
       final savedDocumentDirectoryO = await getApplicationDocumentsDirectory();
@@ -156,9 +154,9 @@ class BackupCreate extends HookConsumerWidget {
       print("${iO + 1}番目のファイルをzip");
     }
     try {
-      final zipFile = File(externalZipPath!);
+      final zipFile = File(externalZipPath);
       await ZipFile.createFromFiles(
-          sourceDir: sourceDir, files: files, zipFile: zipFile);//,zipUri:zipUri);
+          sourceDir: sourceDir, files: files, zipFile: zipFile,zipUri:zipUri);
     } catch (e) {
       ref
           .watch(logProvider.notifier)
@@ -174,19 +172,16 @@ class BackupCreate extends HookConsumerWidget {
 }
 
 class OpenDocument {
-  static const MethodChannel _channel = MethodChannel('openDocument');
-
-  static Future<Uri?> getPath(String mime, String name) async {
+  static Future<String?> getPath(String mime, String name) async {
+    const platform = MethodChannel("forestocean/openDocument");
     try {
-      final result = await _channel.invokeMethod("getPath", {
+      final result = await platform.invokeMethod("getPath", {
         "mime": mime,
         "name": name,
-      }); //name in native code
+      });
 
       return result;
     } on PlatformException catch (e) {
-      //fails native call
-      //handle error
       return null;
     }
   }

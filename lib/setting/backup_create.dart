@@ -3,6 +3,7 @@ import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_archive/flutter_archive.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,6 +23,9 @@ class BackupCreate extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textString = AppLocalizations.of(context);
+    ref.listen(logProvider, (previous, next) {
+      Fluttertoast.showToast(msg: next,toastLength: Toast.LENGTH_SHORT);
+    });
     double deviceHeight = MediaQuery
         .of(context)
         .size
@@ -73,9 +77,6 @@ class BackupCreate extends HookConsumerWidget {
                           ),
                         )
                       ]),
-                  const SizedBox(height: 15,),
-                  Text(ref.watch(logProvider),
-                    style: TextStyle(color: ref.watch(theme6Provider)),),
                   Flexible(child: SettingsList(
                       sections: [
                         SettingsSection(
@@ -115,17 +116,24 @@ class BackupCreate extends HookConsumerWidget {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       if (androidInfo.version.sdkInt >= 30) {
         zipUri = await OpenDocument.getPath('application/zip', fileName);
-        if (zipUri == null) {
+        if (zipUri == null||zipUri.isEmpty) {
           ref
               .watch(logProvider.notifier)
               .state = 'No data';
           return;
         }
+      }else{
+        ref
+            .watch(logProvider.notifier)
+            .state = '${textString?.backup_attention3}';
       }
     } else {
       final savedDocumentDirectoryO = await getApplicationDocumentsDirectory();
       savedPath = savedDocumentDirectoryO.path;
       externalZipPath = "$savedPath/$fileName";
+      ref
+          .watch(logProvider.notifier)
+          .state = '${textString?.backup_attention4}';
     }
 
 

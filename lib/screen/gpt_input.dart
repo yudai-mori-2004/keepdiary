@@ -1,9 +1,7 @@
 import 'dart:io';
-
 import 'package:dart_openai/openai.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:keep_diary/build_context_x.dart';
 import 'package:keep_diary/screen/diary_re_edit_screen.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,9 +9,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:keep_diary/screen/empty.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import '../custom_widget/alert_dialog_gptback.dart';
 import '../custom_widget/alert_dialog_replace.dart';
-import '../helper/file_helper.dart';
 import '../main.dart';
 import 'diary_edit_screen.dart';
 part '../home_screen.g.dart';
@@ -31,7 +28,6 @@ class Messages extends _$Messages {
       content: message,
       role: OpenAIChatMessageRole.user,
     );
-    // ChatGPTに聞く
     state = [
       newUserMessage,
     ];
@@ -70,6 +66,7 @@ class HomeScreen extends HookConsumerWidget {
   String gptTitle='';
   String gptText='';
 
+  bool changed=false;
   bool isRe=false;
 
   @override
@@ -149,7 +146,115 @@ ${ref.watch(gptInputProvider)}''';
     return WillPopScope(
 
         onWillPop: ()async {
-          Navigator.of(context).pop();
+          if(changed) {
+            showDialog<void>(
+                context: context,
+                builder: (_) {
+                  return AlertGPTBack(key, () {
+                    gptTitle=controller0.text;
+                    gptText=controller1.text;
+                    if (isRe) {
+                      Navigator.of(context)
+                          .pushAndRemoveUntil(
+                        PageRouteBuilder(
+                          settings: const RouteSettings(name: 'edit'),
+                          pageBuilder: (context,
+                              animation,
+                              secondaryAnimation) {
+                            return DiaryReEditPage(
+                                key,'$title\n$gptTitle',
+                                '$text\n$gptText',images,true);
+                          },
+                          transitionsBuilder: (
+                              context,
+                              animation,
+                              secondaryAnimation,
+                              child) {
+                            const Offset begin = Offset(
+                                0.0, 1.0); // 下から上
+                            // final Offset begin = Offset(0.0, -1.0); // 上から下
+                            const Offset end = Offset
+                                .zero;
+                            final Animatable<
+                                Offset> tween = Tween(
+                                begin: begin,
+                                end: end)
+                                .chain(CurveTween(
+                                curve: Curves
+                                    .easeInOut));
+                            final Animation<
+                                Offset> offsetAnimation = animation
+                                .drive(tween);
+                            return SlideTransition(
+                              position: offsetAnimation,
+                              child: child,
+                            );
+                          },
+                          transitionDuration: const Duration(
+                              milliseconds: 300),
+                        ),
+                            (Route<dynamic> route) {
+                          if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
+                            return true;
+                          }
+                          return false;
+                        },
+                      );
+                    } else {
+                      Navigator.of(context)
+                          .pushAndRemoveUntil(
+                        PageRouteBuilder(
+                          settings: const RouteSettings(name: 'edit'),
+                          pageBuilder: (context,
+                              animation,
+                              secondaryAnimation) {
+                            return DiaryEditPage(
+                                key, '$title\n$gptTitle',
+                                '$text\n$gptText', images,true);
+                          },
+                          transitionsBuilder: (
+                              context,
+                              animation,
+                              secondaryAnimation,
+                              child) {
+                            const Offset begin = Offset(
+                                0.0, 1.0); // 下から上
+                            // final Offset begin = Offset(0.0, -1.0); // 上から下
+                            const Offset end = Offset
+                                .zero;
+                            final Animatable<
+                                Offset> tween = Tween(
+                                begin: begin,
+                                end: end)
+                                .chain(CurveTween(
+                                curve: Curves
+                                    .easeInOut));
+                            final Animation<
+                                Offset> offsetAnimation = animation
+                                .drive(tween);
+                            return SlideTransition(
+                              position: offsetAnimation,
+                              child: child,
+                            );
+                          },
+                          transitionDuration: const Duration(
+                              milliseconds: 300),
+                        ),
+                            (Route<dynamic> route) {
+                          if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
+                            return true;
+                          }
+                          return false;
+                        },
+                      );
+                    }
+                      },
+                      ref.watch(
+                          fontIndexProvider));
+                });
+          }else {
+            Navigator.of(context).pop();
+          }
           return true;
         },
     child: Scaffold(
@@ -180,7 +285,115 @@ ${ref.watch(gptInputProvider)}''';
                                         color: ref.watch(
                                             appBarTitleColorProvider),
                                         onPressed: () {
-                                          Navigator.of(context).pop();
+                                          if(changed) {
+                                            showDialog<void>(
+                                                context: context,
+                                                builder: (_) {
+                                                  return AlertGPTBack(key, () {
+                                                    gptTitle=controller0.text;
+                                                    gptText=controller1.text;
+                                                    if (isRe) {
+                                                      Navigator.of(context)
+                                                          .pushAndRemoveUntil(
+                                                        PageRouteBuilder(
+                                                          settings: const RouteSettings(name: 'edit'),
+                                                          pageBuilder: (context,
+                                                              animation,
+                                                              secondaryAnimation) {
+                                                            return DiaryReEditPage(
+                                                                key,'$title\n$gptTitle',
+                                                                '$text\n$gptText',images,true);
+                                                          },
+                                                          transitionsBuilder: (
+                                                              context,
+                                                              animation,
+                                                              secondaryAnimation,
+                                                              child) {
+                                                            const Offset begin = Offset(
+                                                                0.0, 1.0); // 下から上
+                                                            // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                                            const Offset end = Offset
+                                                                .zero;
+                                                            final Animatable<
+                                                                Offset> tween = Tween(
+                                                                begin: begin,
+                                                                end: end)
+                                                                .chain(CurveTween(
+                                                                curve: Curves
+                                                                    .easeInOut));
+                                                            final Animation<
+                                                                Offset> offsetAnimation = animation
+                                                                .drive(tween);
+                                                            return SlideTransition(
+                                                              position: offsetAnimation,
+                                                              child: child,
+                                                            );
+                                                          },
+                                                          transitionDuration: const Duration(
+                                                              milliseconds: 300),
+                                                        ),
+                                                            (Route<dynamic> route) {
+                                                          if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
+                                                            return true;
+                                                          }
+                                                          return false;
+                                                        },
+                                                      );
+                                                    } else {
+                                                      Navigator.of(context)
+                                                          .pushAndRemoveUntil(
+                                                        PageRouteBuilder(
+                                                          settings: const RouteSettings(name: 'edit'),
+                                                          pageBuilder: (context,
+                                                              animation,
+                                                              secondaryAnimation) {
+                                                            return DiaryEditPage(
+                                                                key, '$title\n$gptTitle',
+                                                                '$text\n$gptText', images,true);
+                                                          },
+                                                          transitionsBuilder: (
+                                                              context,
+                                                              animation,
+                                                              secondaryAnimation,
+                                                              child) {
+                                                            const Offset begin = Offset(
+                                                                0.0, 1.0); // 下から上
+                                                            // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                                            const Offset end = Offset
+                                                                .zero;
+                                                            final Animatable<
+                                                                Offset> tween = Tween(
+                                                                begin: begin,
+                                                                end: end)
+                                                                .chain(CurveTween(
+                                                                curve: Curves
+                                                                    .easeInOut));
+                                                            final Animation<
+                                                                Offset> offsetAnimation = animation
+                                                                .drive(tween);
+                                                            return SlideTransition(
+                                                              position: offsetAnimation,
+                                                              child: child,
+                                                            );
+                                                          },
+                                                          transitionDuration: const Duration(
+                                                              milliseconds: 300),
+                                                        ),
+                                                            (Route<dynamic> route) {
+                                                          if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
+                                                            return true;
+                                                          }
+                                                          return false;
+                                                        },
+                                                      );
+                                                    }
+                                                  },
+                                                      ref.watch(
+                                                          fontIndexProvider));
+                                                });
+                                          }else {
+                                            Navigator.of(context).pop();
+                                          }
                                         },
                                       ),
                                       flexibleSpace: FlexibleSpaceBar(
@@ -248,6 +461,7 @@ ${ref.watch(gptInputProvider)}''';
                                         color: ref.watch(theme5Provider),
                                       ),
                                       onChanged: (s) {
+                                        changed=true;
                                         ref
                                             .watch(gptInputProvider.notifier)
                                             .state = s;
@@ -298,6 +512,13 @@ ${ref.watch(gptInputProvider)}''';
                                     style: TextStyle(
                                         color: ref.watch(theme3Provider))),
                               ),
+                              Text('${textString?.gpt_write_ad}',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily:'f${ref.watch(fontIndexProvider)}',
+                                      color: ref.watch(theme3Provider))),
+                              const SizedBox(height: 10,),
                               if (isWaiting.value)
                                IconButton(
                                   onPressed: null,

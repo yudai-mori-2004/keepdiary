@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_archive/flutter_archive.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:keep_diary/structure/data_structure.dart';
@@ -20,6 +21,9 @@ class BackupRestore extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textString = AppLocalizations.of(context);
+    ref.listen(logProvider, (previous, next) {
+      Fluttertoast.showToast(msg: next,toastLength: Toast.LENGTH_SHORT);
+    });
     double deviceHeight = MediaQuery
         .of(context)
         .size
@@ -71,9 +75,6 @@ class BackupRestore extends HookConsumerWidget {
                           ),
                         )
                       ]),
-                  const SizedBox(height: 15,),
-                    Text(ref.watch(logProvider),
-                      style: TextStyle(color: ref.watch(theme6Provider)),),
                   Flexible(
                       child: SettingsList(
                           sections: [
@@ -86,6 +87,7 @@ class BackupRestore extends HookConsumerWidget {
                                           '${textString?.delete_restore}'),
                                       onPressed: (context) {
                                         _importFromFolder(ref, false,textString);
+                                        ref.watch(logProvider.notifier).state='${textString?.backup_attention2}';
                                       }
                                   ),
                                   SettingsTile.navigation(
@@ -94,6 +96,7 @@ class BackupRestore extends HookConsumerWidget {
                                           '${textString?.leave_restore}'),
                                       onPressed: (context) {
                                         _importFromFolder(ref, true,textString);
+                                        ref.watch(logProvider.notifier).state='${textString?.backup_attention2}';
                                       }
                                   ),
                                 ]
@@ -109,18 +112,18 @@ class BackupRestore extends HookConsumerWidget {
 
 
   Future<void> _importFromFolder(WidgetRef ref,bool leaveCur,AppLocalizations? textString) async {
-
     final localPath = FileHelper.fileHelper.localPath;
     FilePickerResult? importFileData = await FilePicker.platform.pickFiles();
-    if(importFileData==null) {
+    if (importFileData == null) {
       ref
           .watch(logProvider.notifier)
           .state = 'No file selected.';
-    }else{
+    } else {
       final zipFile = File(importFileData.files.single.path!);
       final destinationDir = Directory(localPath);
       try {
-        await ZipFile.extractToDirectory(zipFile: zipFile, destinationDir: destinationDir);
+        await ZipFile.extractToDirectory(
+            zipFile: zipFile, destinationDir: destinationDir);
         await dataBox.close();
         await Hive.openBox(dataBoxName);
         dataBox = Hive.box<dynamic>(dataBoxName);
@@ -148,7 +151,8 @@ class BackupRestore extends HookConsumerWidget {
         await settingDataBox.close();
         await Hive.openBox<SettingData>(settingDataBoxName);
         settingDataBox = Hive.box<SettingData>(settingDataBoxName);
-        settingData = settingDataBox.get(settingDataBoxName, defaultValue: SettingData.empty());
+        settingData = settingDataBox.get(
+            settingDataBoxName, defaultValue: SettingData.empty());
         settingDataBox.put(settingDataBoxName, settingData);
 
         ref

@@ -157,8 +157,12 @@
   "@auto_diary_desc": {
     "description": "rate title label"
   },
-  "gpt_write": "Write automatically\n[Ad will be played]",
+  "gpt_write": "Write automatically",
   "@gpt_write": {
+    "description": "rate title label"
+  },
+  "gpt_write_ad": "Ad will be played",
+  "@gpt_write_ad": {
     "description": "rate title label"
   },
   "empty": "Please write down a list of what happened today",
@@ -215,6 +219,18 @@
   },
   "backup_attention2": "Select the zip file starting with \"DiaryBackup\"",
   "@backup_attention2": {
+    "description": "rate title label"
+  },
+  "backup_attention3": "Backup data will be stored in the download folder of the device",
+  "@backup_attention3": {
+    "description": "rate title label"
+  },
+  "backup_attention4": "Backup data will be stored in this app's folder",
+  "@backup_attention4": {
+    "description": "rate title label"
+  },
+  "backgpt": "Would you like to overwrite this statement in your diary?",
+  "@backgpt": {
     "description": "rate title label"
   },
   "backup_google": "Backup as Zip file",

@@ -53,10 +53,10 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.0
   build_runner: ^2.3.3
 
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icon/diary_icon_ios.png"
+  image_path: "assets/icon/diary_icon.png"
 
 flutter:
   uses-material-design: true

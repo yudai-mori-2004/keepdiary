@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../main.dart';
 import '../screen/bookcover_screen.dart';
+import '../screen/home_page.dart';
 
 class AlertDelete extends StatelessWidget {
   AlertDelete(Key? key,int i,int f) : super(key: key){index=i;font=f;}
@@ -34,7 +35,7 @@ class AlertDelete extends StatelessWidget {
                   settings: const RouteSettings(name: 'book'),
                   pageBuilder: (context, animation,
                       secondaryAnimation) {
-                    return BookCoverPage(key: key,);
+                    return HomePage();
                   },
                   transitionsBuilder: (context,
                       animation,

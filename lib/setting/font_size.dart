@@ -64,12 +64,19 @@ class FontSizeSetting extends HookConsumerWidget {
                         )
                       ]),
                   Expanded(child: SettingsList(
+                    platform: DevicePlatform.android,
+                    brightness: Brightness.light,
+                    lightTheme: SettingsThemeData(
+                      settingsListBackground: ref.watch(theme1Provider),
+                      settingsTileTextColor: ref.watch(theme4Provider),
+                      titleTextColor: ref.watch(theme4Provider),
+                    ),
                     sections: [
                       SettingsSection(
                         title:  Text('${textString?.text_size}'),
                         tiles: <SettingsTile>[
                           SettingsTile.navigation(
-                            leading: const Icon(Icons.text_fields),
+                            leading:  Icon(Icons.text_fields,color: ref.watch(theme3Provider)),
                             title:  Text('${textString?.text_size_diary}'),
                             onPressed: (context) =>
                                 Navigator.push(
@@ -79,7 +86,7 @@ class FontSizeSetting extends HookConsumerWidget {
                                 ),
                           ),
                           SettingsTile.navigation(
-                            leading: const Icon(Icons.text_fields),
+                            leading:  Icon(Icons.text_fields,color: ref.watch(theme3Provider)),
                             title:  Text('${textString?.text_size_list}'),
                             onPressed: (context) =>
                                 Navigator.push(

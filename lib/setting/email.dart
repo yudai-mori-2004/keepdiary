@@ -23,6 +23,7 @@ class SendMailSetting extends HookConsumerWidget {
         .size
         .height;
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -75,21 +76,23 @@ class SendMailSetting extends HookConsumerWidget {
                       child: Column(
                         children: [
                           const SizedBox(height: 40),
-                          Text('${textString?.mail}',
-                            style: TextStyle(color: Colors.white),),
+                          Text('${textString?.mail}'
+                              ,style: TextStyle(color: ref.watch(theme4Provider))),
                           const SizedBox(height: 20),
                           TextFormField(
-                            controller: _subjectController,
+                            controller: _subjectController
+                              ,style: TextStyle(color: ref.watch(theme4Provider)),
                             decoration: InputDecoration(hintText: '${textString?.title_mail}'),
                           ),
                           const SizedBox(height: 20),
                           TextFormField(
-                            controller: _bodyController,
+                            controller: _bodyController
+                              ,style: TextStyle(color: ref.watch(theme4Provider)),
                             decoration: InputDecoration(hintText: '${textString?.content_mail}'),
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton(
-                              onPressed: _sendEmail, child: Text( '${textString?.send}')),
+                              onPressed: _sendEmail, child: Text( '${textString?.send}',style: TextStyle(color: ref.watch(theme4Provider)))),
                           const SizedBox(height: 40),
                         ],
                       ),

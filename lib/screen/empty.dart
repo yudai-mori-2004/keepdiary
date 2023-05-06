@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:keep_diary/screen/home_page.dart';
 import '../custom_widget/first_input_pass.dart';
 import '../main.dart';
 import 'bookcover_screen.dart';
@@ -43,6 +44,11 @@ class EmptyState extends ConsumerState<EmptyPage> {
   }
 
   Future<void> _initializeNotification() async {
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
+
     const DarwinInitializationSettings initializationSettingsIOS =
     DarwinInitializationSettings(
       requestAlertPermission: false,
@@ -87,7 +93,7 @@ class EmptyState extends ConsumerState<EmptyPage> {
         local,
         now.year,
         now.month,
-        now.day+i,
+        now.day + i,
         hour,
         minutes,
       );
@@ -135,6 +141,12 @@ class EmptyState extends ConsumerState<EmptyPage> {
     final password = prefs.getString('lockPassword') ?? '';
     final valid = prefs.getBool("isPasswordLock") ?? false;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ref
+          .watch(themeIndex.notifier)
+          .state = prefs.getInt("Theme-index") ?? 0;
+      ref
+          .watch(darkMord.notifier)
+          .state = prefs.getBool("Dark-mode") ?? false;
       ref
           .watch(appBarTitleColorProvider.notifier)
           .state = Color(settingData.appBarTitleColorProvider);
@@ -199,7 +211,7 @@ class EmptyState extends ConsumerState<EmptyPage> {
               builder: (context) {
                 return valid
                     ? FirstInputPassword(password: password)
-                    : const BookCoverPage();
+                    : HomePage();
               }
           )
       );
@@ -218,13 +230,17 @@ class EmptyState extends ConsumerState<EmptyPage> {
     return const Scaffold();
   }
 
-   static void loadAd(WidgetRef ref){
+  static void loadAd(WidgetRef ref) {
     RewardedAd.load(
-        adUnitId: Platform.isAndroid?'ca-app-pub-5499367448047451/9258647921':'ca-app-pub-5499367448047451/4847865287',
+        adUnitId: Platform.isAndroid
+            ? 'ca-app-pub-5499367448047451/9258647921'
+            : 'ca-app-pub-5499367448047451/4847865287',
         request: const AdRequest(),
         rewardedAdLoadCallback: RewardedAdLoadCallback(
           onAdLoaded: (RewardedAd ad) {
-            ref.watch(adLoadedProvider.notifier).state=true;
+            ref
+                .watch(adLoadedProvider.notifier)
+                .state = true;
             print('$ad loaded.');
             // Keep a reference to the ad so you can show it later.
             rewardedAd = ad;
@@ -248,19 +264,27 @@ class EmptyState extends ConsumerState<EmptyPage> {
           },
           onAdFailedToLoad: (LoadAdError error) {
             print('RewardedAd failed to load: $error');
-            ref.watch(adLoadedProvider.notifier).state=false;
+            ref
+                .watch(adLoadedProvider.notifier)
+                .state = false;
           },
         ));
-   }
+  }
 
 
-  static void loadAdAndShow(Function(AdWithoutView ad, RewardItem rewardItem) onUserEarnedReward,AppLocalizations? textString,WidgetRef ref){
+  static void loadAdAndShow(
+      Function(AdWithoutView ad, RewardItem rewardItem) onUserEarnedReward,
+      AppLocalizations? textString, WidgetRef ref) {
     RewardedAd.load(
-        adUnitId: Platform.isAndroid?'ca-app-pub-5499367448047451/9258647921':'ca-app-pub-5499367448047451/4847865287',
+        adUnitId: Platform.isAndroid
+            ? 'ca-app-pub-5499367448047451/9258647921'
+            : 'ca-app-pub-5499367448047451/4847865287',
         request: const AdRequest(),
         rewardedAdLoadCallback: RewardedAdLoadCallback(
           onAdLoaded: (RewardedAd ad) {
-            ref.watch(adLoadedProvider.notifier).state=true;
+            ref
+                .watch(adLoadedProvider.notifier)
+                .state = true;
             print('$ad loaded.');
             // Keep a reference to the ad so you can show it later.
             rewardedAd = ad;
@@ -290,8 +314,10 @@ class EmptyState extends ConsumerState<EmptyPage> {
               msg: '${textString?.ad_failed}',
               toastLength: Toast.LENGTH_SHORT,
             );
-            ref.watch(adLoadedProvider.notifier).state=false;
+            ref
+                .watch(adLoadedProvider.notifier)
+                .state = false;
           },
         ));
-   }
+  }
 }

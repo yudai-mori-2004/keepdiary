@@ -21,6 +21,7 @@ class FontSizeListSetting extends HookConsumerWidget {
         .size
         .height;
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -67,11 +68,12 @@ class FontSizeListSetting extends HookConsumerWidget {
                           ),
                         )
                       ]),
-                  const SizedBox(height: 20,),
+                  Container(height: 20,color:ref.watch(theme1Provider)),
                   SizedBox(
                       height: 60,
                       child:
                       DropdownButton(
+                        dropdownColor: ref.watch(theme1Provider),
                         borderRadius: const BorderRadius.all(
                             Radius.circular(10)),
                         value: _selectedValue,
@@ -79,7 +81,8 @@ class FontSizeListSetting extends HookConsumerWidget {
                           for(int i = 13; i <= 40; i++)
                             DropdownMenuItem(
                               value: i,
-                              child: Text('$i${i == 16 ? ' (default)' : ''}',
+                              child: Text('$i${i == 16 ? ' (default)' : ''}'
+                                  ,style: TextStyle(color: ref.watch(theme4Provider))
                               ),
                             ),
                         ],
@@ -100,6 +103,7 @@ class FontSizeListSetting extends HookConsumerWidget {
                           padding: const EdgeInsets.all(20), child: Text(
                         '${textString?.font_ex}',
                         style: TextStyle(
+                        color: ref.watch(theme4Provider),
                           fontSize: ref.watch(fontSizeListProvider) * 1.0,
                           fontFamily: 'f${ref.watch(fontIndexProvider)}',),)
                       )

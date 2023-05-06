@@ -27,6 +27,7 @@ class NotificationSetting extends HookConsumerWidget {
         .size
         .height;
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -75,7 +76,7 @@ class NotificationSetting extends HookConsumerWidget {
                       ]),
                   const SizedBox(height: 20,),
                   SwitchListTile(
-                    title: Text('${textString?.notification}'),
+                    title: Text('${textString?.notification}',style: TextStyle(color: ref.watch(theme4Provider)),),
                     value: ref.watch(notificationEnabled),
                     activeColor: ref.watch(theme6Provider),
                     onChanged: (b) async {
@@ -90,111 +91,112 @@ class NotificationSetting extends HookConsumerWidget {
                           .watch(notificationEnabled.notifier)
                           .state = b;
                     },
-                    secondary: const Icon(Icons.notifications),
+                    secondary: Icon(Icons.notifications,color: ref.watch(theme3Provider),),
                   ),
                   SizedBox(
                       height: 60,
                       child:
                       DropdownButton(
+                        dropdownColor: ref.watch(theme1Provider),
                         borderRadius: const BorderRadius.all(
                             Radius.circular(10)),
                         value: ref.watch(notificationTimeProvider),
-                        items: const [
+                        items:  [
                           DropdownMenuItem(
                             value: 0,
-                            child: Text('0:00'),
+                            child: Text('0:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 1,
-                            child: Text('1:00'),
+                            child: Text('1:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 2,
-                            child: Text('2:00'),
+                            child: Text('2:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 3,
-                            child: Text('3:00'),
+                            child: Text('3:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 4,
-                            child: Text('4:00'),
+                            child: Text('4:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 5,
-                            child: Text('5:00'),
+                            child: Text('5:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 6,
-                            child: Text('6:00'),
+                            child: Text('6:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 7,
-                            child: Text('7:00'),
+                            child: Text('7:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 8,
-                            child: Text('8:00'),
+                            child: Text('8:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 9,
-                            child: Text('9:00'),
+                            child: Text('9:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 0,
-                            child: Text('0:00'),
+                            child: Text('0:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 11,
-                            child: Text('11:00'),
+                            child: Text('11:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 12,
-                            child: Text('12:00'),
+                            child: Text('12:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 13,
-                            child: Text('13:00'),
+                            child: Text('13:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 14,
-                            child: Text('14:00'),
+                            child: Text('14:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 15,
-                            child: Text('15:00'),
+                            child: Text('15:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 16,
-                            child: Text('16:00'),
+                            child: Text('16:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 17,
-                            child: Text('17:00'),
+                            child: Text('17:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 18,
-                            child: Text('18:00'),
+                            child: Text('18:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 19,
-                            child: Text('19:00'),
+                            child: Text('19:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 20,
-                            child: Text('20:00'),
+                            child: Text('20:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 21,
-                            child: Text('21:00'),
+                            child: Text('21:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 22,
-                            child: Text('22:00'),
+                            child: Text('22:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 23,
-                            child: Text('23:00'),
+                            child: Text('23:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                         ],
                         onChanged: (value) async {

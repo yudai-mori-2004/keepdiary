@@ -67,12 +67,19 @@ class IntroSetting extends HookConsumerWidget {
                         )
                       ]),
                   Expanded(child: SettingsList(
+                    platform: DevicePlatform.android,
+                    brightness: Brightness.light,
+                    lightTheme: SettingsThemeData(
+                      settingsListBackground: ref.watch(theme1Provider),
+                      settingsTileTextColor: ref.watch(theme4Provider),
+                      titleTextColor: ref.watch(theme4Provider),
+                    ),
                     sections: [
                       SettingsSection(
                         title:  Text('${textString?.self_desc}'),
                         tiles: <SettingsTile>[
                           SettingsTile.navigation(
-                            leading: const Icon(Icons.person),
+                            leading: Icon(Icons.person,color: ref.watch(theme3Provider)),
                             title:  TextFormField(
                               autofocus: true,
                               cursorColor: ref.watch(theme6Provider),

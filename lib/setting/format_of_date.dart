@@ -21,6 +21,7 @@ class DateFormatSetting extends HookConsumerWidget {
         .size
         .height;
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -72,106 +73,107 @@ class DateFormatSetting extends HookConsumerWidget {
                       height: 60,
                       child:
                       DropdownButton(
+                        dropdownColor: ref.watch(theme1Provider),
                         borderRadius: const BorderRadius.all(
                             Radius.circular(10)),
                         value: ref.watch(dateFormatProvider),
-                        items: const [
+                        items:  [
                           DropdownMenuItem(
                             value: 0,
-                            child: Text('1/1/2023'),
+                            child: Text('1/1/2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 1,
-                            child: Text('1.1.2023'),
+                            child: Text('1.1.2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 2,
-                            child: Text('1-1-2023'),
+                            child: Text('1-1-2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 3,
-                            child: Text('1/1 2023'),
+                            child: Text('1/1 2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 4,
-                            child: Text('1.1 2023'),
+                            child: Text('1.1 2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 5,
-                            child: Text('1-1 2023'),
+                            child: Text('1-1 2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 6,
-                            child: Text('Sun 1/1/2023'),
+                            child: Text('Sun 1/1/2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 7,
-                            child: Text('Sun 1.1.2023'),
+                            child: Text('Sun 1.1.2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 8,
-                            child: Text('Sun 1-1-2023'),
+                            child: Text('Sun 1-1-2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 9,
-                            child: Text('Sun 1/1 2023'),
+                            child: Text('Sun 1/1 2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 10,
-                            child: Text('Sun 1.1 2023'),
+                            child: Text('Sun 1.1 2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 11,
-                            child: Text('Sun 1-1 2023'),
+                            child: Text('Sun 1-1 2023',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
 
                           DropdownMenuItem(
                             value: 12,
-                            child: Text('2023/1/1'),
+                            child: Text('2023/1/1',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 13,
-                            child: Text('2023.1.1'),
+                            child: Text('2023.1.1',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 14,
-                            child: Text('2023-1-1'),
+                            child: Text('2023-1-1',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 15,
-                            child: Text('2023 1/1'),
+                            child: Text('2023 1/1',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 16,
-                            child: Text('2023 1.1'),
+                            child: Text('2023 1.1',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 17,
-                            child: Text('2023 1-1'),
+                            child: Text('2023 1-1',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 18,
-                            child: Text('2023/1/1 Sun'),
+                            child: Text('2023/1/1 Sun',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 19,
-                            child: Text('2023.1.1 Sun'),
+                            child: Text('2023.1.1 Sun',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 20,
-                            child: Text('2023-1-1 Sun'),
+                            child: Text('2023-1-1 Sun',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 21,
-                            child: Text('2023 1/1 Sun'),
+                            child: Text('2023 1/1 Sun',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 22,
-                            child: Text('2023 1.1 Sun'),
+                            child: Text('2023 1.1 Sun',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 23,
-                            child: Text('2023 1-1 Sun'),
+                            child: Text('2023 1-1 Sun',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                         ],
                         onChanged: (value) {

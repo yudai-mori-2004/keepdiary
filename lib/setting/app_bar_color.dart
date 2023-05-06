@@ -22,6 +22,7 @@ class AppBarColorSetting extends HookConsumerWidget {
         .height;
 
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,

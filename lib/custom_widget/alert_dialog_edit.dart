@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../main.dart';
 import '../screen/bookcover_screen.dart';
+import '../screen/home_page.dart';
 
 class AlertDeleteEdit extends StatelessWidget {
   AlertDeleteEdit(Key? key,Function a,int f) : super(key: key){action=a;font=f;}
@@ -32,7 +33,7 @@ class AlertDeleteEdit extends StatelessWidget {
                   settings: const RouteSettings(name: 'book'),
                   pageBuilder: (context, animation,
                       secondaryAnimation) {
-                    return BookCoverPage(key: key,);
+                    return HomePage();
                   },
                   transitionsBuilder: (context,
                       animation,

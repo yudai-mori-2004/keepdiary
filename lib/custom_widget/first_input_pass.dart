@@ -12,8 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 import '../screen/bookcover_screen.dart';
+import '../screen/home_page.dart';
 
-class FirstInputPassword extends StatefulWidget {
+class FirstInputPassword extends ConsumerStatefulWidget {
 
   String password;
 
@@ -23,7 +24,7 @@ class FirstInputPassword extends StatefulWidget {
   _FirstInputPasswordState createState() => _FirstInputPasswordState();
 }
 
-class _FirstInputPasswordState extends State<FirstInputPassword> {
+class _FirstInputPasswordState extends ConsumerState<FirstInputPassword> {
 
   final StreamController<bool> _verificationNotifier =
   StreamController<bool>.broadcast(); //入力状況を感知
@@ -69,45 +70,31 @@ class _FirstInputPasswordState extends State<FirstInputPassword> {
     return PasscodeScreen(
       title: Column(
         children: <Widget>[
-          const Icon(Icons.lock, size: 30),
+          Icon(Icons.lock, size: 30,color: ref.watch(theme4Provider),),
           Text(
             '${textString?.input_pass}',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 15, color: Theme
-                .of(context)
-                .dividerColor),
+            style: TextStyle(fontSize: 15,color: ref.watch(theme3Provider),)
           ),
         ],
       ),
       passwordDigits: passwordDigits,
       circleUIConfig: CircleUIConfig(
-        borderColor: Theme
-            .of(context)
-            .dividerColor,
-        fillColor: Theme
-            .of(context)
-            .dividerColor,
+        borderColor: ref.watch(theme3Provider),
+        fillColor: ref.watch(theme3Provider),
         circleSize: 20,
       ),
       keyboardUIConfig: KeyboardUIConfig(
-        primaryColor: Theme
-            .of(context)
-            .dividerColor,
-        digitTextStyle: const TextStyle(fontSize: 25),
+        primaryColor: ref.watch(theme3Provider),
+        digitTextStyle: TextStyle(color: ref.watch(theme4Provider),fontSize: 25),
         deleteButtonTextStyle: const TextStyle(fontSize: 15),
       ),
       passwordEnteredCallback: _onPasscodeEntered,
       //パスワードが入力された時の処理
-      deleteButton: Icon(Icons.backspace, size: 25.0, color: Theme
-          .of(context)
-          .dividerColor,),
-      cancelButton: Icon(Icons.cancel, size: 25.0, color: Theme
-          .of(context)
-          .dividerColor,),
+      deleteButton: Icon(Icons.backspace, size: 25.0, color: ref.watch(theme3Provider)),
+      cancelButton: Icon(Icons.cancel, size: 25.0, color: ref.watch(theme3Provider)),
       shouldTriggerVerification: _verificationNotifier.stream,
-      backgroundColor: Theme
-          .of(context)
-          .primaryColor,
+      backgroundColor: ref.watch(theme1Provider),
     );
   }
 
@@ -117,7 +104,7 @@ class _FirstInputPasswordState extends State<FirstInputPassword> {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(
               settings: const RouteSettings(name: 'book'),
-              builder: (context) => const BookCoverPage())
+              builder: (context) => HomePage())
       );
     } else {
       setState(() {

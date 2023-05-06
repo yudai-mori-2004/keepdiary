@@ -12,8 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 import '../screen/bookcover_screen.dart';
+import '../screen/home_page.dart';
 
-class ConfirmPassword extends StatefulWidget {
+class ConfirmPassword extends ConsumerStatefulWidget {
 
   String password;
 
@@ -23,7 +24,7 @@ class ConfirmPassword extends StatefulWidget {
   _ConfirmPasswordState createState() => _ConfirmPasswordState();
 }
 
-class _ConfirmPasswordState extends State<ConfirmPassword> {
+class _ConfirmPasswordState extends ConsumerState<ConfirmPassword> {
 
   final StreamController<bool> _verificationNotifier =
   StreamController<bool>.broadcast();//入力状況を感知
@@ -69,45 +70,45 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
     return  PasscodeScreen(
       title: Column(
         children: <Widget>[
-          const Icon(Icons.lock, size: 30),
+          Icon(Icons.lock, size: 30,color: ref.watch(theme4Provider),),
           Text(
             '${textString?.input_pass}',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 15,color:Theme.of(context).dividerColor ),
+            style: TextStyle(fontSize: 15,color:ref.watch(theme3Provider), ),
           ),
           Text(
             '${textString?.confirm_pass}',//メッセージを表示します。
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 10,color:Theme.of(context).dividerColor ),
+            style: TextStyle(fontSize: 10,color:ref.watch(theme3Provider),),
           ),
         ],
       ),
       passwordDigits: passwordDigits,
       circleUIConfig: CircleUIConfig(
-        borderColor: Theme.of(context).dividerColor,
-        fillColor: Theme.of(context).dividerColor,
+        borderColor: ref.watch(theme3Provider),
+        fillColor: ref.watch(theme3Provider),
         circleSize: 20,
       ),
       keyboardUIConfig: KeyboardUIConfig(
-        primaryColor: Theme.of(context).dividerColor,
-        digitTextStyle: const TextStyle(fontSize: 25),
+        primaryColor: ref.watch(theme3Provider),
+        digitTextStyle: TextStyle(color: ref.watch(theme4Provider),fontSize: 25),
         deleteButtonTextStyle: const TextStyle(fontSize: 15),
       ),
       passwordEnteredCallback: _onPasscodeEntered,//パスワードが入力された時の処理
-      deleteButton: Icon(Icons.backspace, size: 25.0,color:Theme.of(context).dividerColor ,),
+      deleteButton: Icon(Icons.backspace, size: 25.0,color:ref.watch(theme3Provider) ,),
       cancelButton:  ElevatedButton(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.grey,
-          backgroundColor: Colors.white,
+          backgroundColor:ref.watch(theme3Provider),
           shape: const StadiumBorder(),
         ),
         onPressed: () { _onPasscodeCancelled(); },
         child: Text('${textString?.free_lock}',
-            style: const TextStyle(color: Colors.black)
+            style: TextStyle(color: ref.watch(theme3Provider),)
         ),
       ),
       shouldTriggerVerification: _verificationNotifier.stream,
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: ref.watch(theme1Provider),
     );
   }
 
@@ -135,7 +136,7 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
           settings: const RouteSettings(name: 'book'),
           pageBuilder: (context, animation,
               secondaryAnimation) {
-            return BookCoverPage();
+            return HomePage();
           },
           transitionsBuilder: (context,
               animation,
@@ -175,7 +176,7 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
           settings: const RouteSettings(name: 'book'),
           pageBuilder: (context, animation,
               secondaryAnimation) {
-            return BookCoverPage();
+            return HomePage();
           },
           transitionsBuilder: (context,
               animation,

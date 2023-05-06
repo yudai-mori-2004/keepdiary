@@ -66,14 +66,21 @@ class BackupSetting extends HookConsumerWidget {
                           ),
                         )
                       ]),
-                  const SizedBox(height: 20,),
+                  Container(height: 20,color: ref.watch(theme1Provider),),
                   Expanded(child: SettingsList(
+                      platform: DevicePlatform.android,
+                      brightness: Brightness.light,
+                      lightTheme: SettingsThemeData(
+                        settingsListBackground: ref.watch(theme1Provider),
+                        settingsTileTextColor: ref.watch(theme4Provider),
+                        titleTextColor: ref.watch(theme4Provider),
+                      ),
                       sections: [
                         SettingsSection(
                             title: Text('${textString?.backup}'),
                             tiles: <SettingsTile>[
                               SettingsTile.navigation(
-                                  leading: const Icon(Icons.backup),
+                                  leading: Icon(Icons.backup,color: ref.watch(theme3Provider),),
                                   title: Text('${textString?.backup_google}'),
                                   onPressed: (context) {
                                     Navigator.push(
@@ -90,7 +97,7 @@ class BackupSetting extends HookConsumerWidget {
                             title: Text('${textString?.restore}'),
                             tiles: <SettingsTile>[
                               SettingsTile.navigation(
-                                  leading: const Icon(Icons.download_for_offline),
+                                  leading: Icon(Icons.download_for_offline,color: ref.watch(theme3Provider)),
                                   title: Text('${textString?.restore_google}'),
                                   onPressed: (context) { Navigator.push(
                                       context,

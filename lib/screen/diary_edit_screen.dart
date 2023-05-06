@@ -18,6 +18,7 @@ import '../helper/file_helper.dart';
 import '../main.dart';
 import '../screen/settings_screen.dart';
 import 'gpt_input.dart';
+import 'home_page.dart';
 
 
 late String e_title;
@@ -75,68 +76,67 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
     controller1.value = controller1.value.copyWith(text: e_text);
 
     return WillPopScope(
-
         onWillPop: ()async {
-          if(isChanged) {
+          if (isChanged) {
             showDialog<void>(
-              context: context,
-              builder: (_) {
-                return AlertReBack(key,
-                        () {
-                          data.addDiary(
-                              e_year,
-                              e_month,
-                              e_day,
-                              DateTime.now(),
-                              e_height,
-                              e_title,
-                              e_text,
-                              ref.watch(currentPickImageProvider)
-                          );
-                          dataBox.put(dataBoxName, data);
-                          removeEditing();
-                      Navigator.of(context)
-                          .pushReplacement(
-                        PageRouteBuilder(
-                          settings: const RouteSettings(name: 'book'),
-                          pageBuilder: (context,
-                              animation,
-                              secondaryAnimation) {
-                            return BookCoverPage(key: key);
-                          },
-                          transitionsBuilder: (
-                              context,
-                              animation,
-                              secondaryAnimation,
-                              child) {
-                            const Offset begin = Offset(
-                                0.0, 1.0); // 下から上
-                            // final Offset begin = Offset(0.0, -1.0); // 上から下
-                            const Offset end = Offset
-                                .zero;
-                            final Animatable<
-                                Offset> tween = Tween(
-                                begin: begin,
-                                end: end)
-                                .chain(CurveTween(
-                                curve: Curves
-                                    .easeInOut));
-                            final Animation<
-                                Offset> offsetAnimation = animation
-                                .drive(tween);
-                            return SlideTransition(
-                              position: offsetAnimation,
-                              child: child,
-                            );
-                          },
-                          transitionDuration: const Duration(
-                              milliseconds: 300),
-                        ),
-                      );
-                    },
-                    ref.watch(
-                        fontIndexProvider));
-              });
+                context: context,
+                builder: (_) {
+                  return AlertReBack(key,
+                          () {
+                        data.addDiary(
+                            e_year,
+                            e_month,
+                            e_day,
+                            DateTime.now(),
+                            e_height,
+                            e_title,
+                            e_text,
+                            ref.watch(currentPickImageProvider)
+                        );
+                        dataBox.put(dataBoxName, data);
+                        removeEditing();
+                        Navigator.of(context)
+                            .pushAndRemoveUntil(
+                            PageRouteBuilder(
+                              settings: const RouteSettings(name: 'book'),
+                              pageBuilder: (context,
+                                  animation,
+                                  secondaryAnimation) {
+                                return HomePage();
+                              },
+                              transitionsBuilder: (context,
+                                  animation,
+                                  secondaryAnimation,
+                                  child) {
+                                const Offset begin = Offset(
+                                    0.0, 1.0); // 下から上
+                                // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                const Offset end = Offset
+                                    .zero;
+                                final Animatable<
+                                    Offset> tween = Tween(
+                                    begin: begin,
+                                    end: end)
+                                    .chain(CurveTween(
+                                    curve: Curves
+                                        .easeInOut));
+                                final Animation<
+                                    Offset> offsetAnimation = animation
+                                    .drive(tween);
+                                return SlideTransition(
+                                  position: offsetAnimation,
+                                  child: child,
+                                );
+                              },
+                              transitionDuration: const Duration(
+                                  milliseconds: 300),
+                            ),
+                                (_) => false
+                        );
+                      },
+                      ref.watch(
+                          fontIndexProvider));
+                });
           }
           return true;
         },
@@ -182,49 +182,58 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                               e_height,
                                                               e_title,
                                                               e_text,
-                                                              ref.watch(currentPickImageProvider)
+                                                              ref.watch(
+                                                                  currentPickImageProvider)
                                                           );
-                                                          dataBox.put(dataBoxName, data);
+                                                          dataBox.put(
+                                                              dataBoxName,
+                                                              data);
                                                           removeEditing();
-                                                      Navigator.of(context)
-                                                          .pushReplacement(
-                                                        PageRouteBuilder(
-                                                          settings: const RouteSettings(name: 'book'),
-                                                          pageBuilder: (context,
-                                                              animation,
-                                                              secondaryAnimation) {
-                                                            return BookCoverPage(key: key);
-                                                          },
-                                                          transitionsBuilder: (
-                                                              context,
-                                                              animation,
-                                                              secondaryAnimation,
-                                                              child) {
-                                                            const Offset begin = Offset(
-                                                                0.0, 1.0); // 下から上
-                                                            // final Offset begin = Offset(0.0, -1.0); // 上から下
-                                                            const Offset end = Offset
-                                                                .zero;
-                                                            final Animatable<
-                                                                Offset> tween = Tween(
-                                                                begin: begin,
-                                                                end: end)
-                                                                .chain(CurveTween(
-                                                                curve: Curves
-                                                                    .easeInOut));
-                                                            final Animation<
-                                                                Offset> offsetAnimation = animation
-                                                                .drive(tween);
-                                                            return SlideTransition(
-                                                              position: offsetAnimation,
-                                                              child: child,
-                                                            );
-                                                          },
-                                                          transitionDuration: const Duration(
-                                                              milliseconds: 300),
-                                                        ),
-                                                      );
-                                                    },
+                                                          Navigator.of(context)
+                                                              .pushAndRemoveUntil(
+                                                              PageRouteBuilder(
+                                                                settings: const RouteSettings(
+                                                                    name: 'book'),
+                                                                pageBuilder: (
+                                                                    context,
+                                                                    animation,
+                                                                    secondaryAnimation) {
+                                                                  return HomePage();
+                                                                },
+                                                                transitionsBuilder: (
+                                                                    context,
+                                                                    animation,
+                                                                    secondaryAnimation,
+                                                                    child) {
+                                                                  const Offset begin = Offset(
+                                                                      0.0,
+                                                                      1.0); // 下から上
+                                                                  // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                                                  const Offset end = Offset
+                                                                      .zero;
+                                                                  final Animatable<
+                                                                      Offset> tween = Tween(
+                                                                      begin: begin,
+                                                                      end: end)
+                                                                      .chain(
+                                                                      CurveTween(
+                                                                          curve: Curves
+                                                                              .easeInOut));
+                                                                  final Animation<
+                                                                      Offset> offsetAnimation = animation
+                                                                      .drive(
+                                                                      tween);
+                                                                  return SlideTransition(
+                                                                    position: offsetAnimation,
+                                                                    child: child,
+                                                                  );
+                                                                },
+                                                                transitionDuration: const Duration(
+                                                                    milliseconds: 300),
+                                                              ),
+                                                                  (_) => false
+                                                          );
+                                                        },
                                                     ref.watch(
                                                         fontIndexProvider));
                                               });
@@ -521,7 +530,7 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                     settings: const RouteSettings(name: 'book'),
                                     pageBuilder: (context, animation,
                                         secondaryAnimation) {
-                                      return BookCoverPage(key: key,);
+                                      return HomePage();
                                     },
                                     transitionsBuilder: (context,
                                         animation,

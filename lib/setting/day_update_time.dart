@@ -21,6 +21,7 @@ class DateUpdateSetting extends HookConsumerWidget {
         .size
         .height;
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -67,42 +68,44 @@ class DateUpdateSetting extends HookConsumerWidget {
                           ),
                         )
                       ]),
-                  const SizedBox(height: 20,),
-                  SizedBox(
+                  Container(height: 20,color: ref.watch(theme1Provider),),
+                  Container(
                       height: 60,
+                      color: ref.watch(theme1Provider),
                       child:
                       DropdownButton(
+                        dropdownColor: ref.watch(theme1Provider),
                         borderRadius: const BorderRadius.all(
                             Radius.circular(10)),
                         value: ref.watch(dateUpdateTimeProvider),
-                        items: const [
+                        items:  [
                           DropdownMenuItem(
                             value: 0,
-                            child: Text('AM 0:00'),
+                            child: Text('AM 0:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 1,
-                            child: Text('AM 1:00'),
+                            child: Text('AM 1:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 2,
-                            child: Text('AM 2:00'),
+                            child: Text('AM 2:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 3,
-                            child: Text('AM 3:00'),
+                            child: Text('AM 3:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 4,
-                            child: Text('AM 4:00'),
+                            child: Text('AM 4:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 5,
-                            child: Text('AM 5:00'),
+                            child: Text('AM 5:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 6,
-                            child: Text('AM 6:00'),
+                            child: Text('AM 6:00',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                         ],
                         onChanged: (value) {

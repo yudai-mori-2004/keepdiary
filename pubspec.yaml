@@ -39,6 +39,7 @@ dependencies:
   external_path: ^1.0.3
   device_info_plus: ^8.2.2
   google_mobile_ads: ^3.0.0
+  table_calendar: ^3.0.4
   flutter_archive:
     path: ./plugins/flutter_archive-5.0.0
 

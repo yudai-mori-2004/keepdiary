@@ -2,12 +2,14 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:keep_diary/custom_widget/comfirm_pass.dart';
 import 'package:keep_diary/screen/settings_screen.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import '../custom_widget/alert_dialog_quit.dart';
 import '../custom_widget/input_pass.dart';
 import '../helper/file_helper.dart';
@@ -18,17 +20,19 @@ import 'diary_view_screen.dart';
 var _itemScrollController = ItemScrollController();
 var _itemPositionsListener = ItemPositionsListener.create();
 var _initialized=false;
+var _selected=DateTime.now();
 var _wordList=<String>[];
 var _lastM=0;
+var _flg=false;
 
-class BookCoverPage extends ConsumerStatefulWidget {
-  const BookCoverPage({Key? key}) : super(key: key);
+class CalenderPage extends ConsumerStatefulWidget {
+  const CalenderPage({Key? key}) : super(key: key);
 
   @override
-  BookCoverPageState createState() => BookCoverPageState();
+  CalenderState createState() => CalenderState();
 }
 
-class BookCoverPageState extends ConsumerState<BookCoverPage> {
+class CalenderState extends ConsumerState<CalenderPage> {
   static const appBarHeight = 60.0;
 
   @override
@@ -47,6 +51,7 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
     final textString = AppLocalizations.of(context);
     final password = prefs.getString('lockPassword') ?? '';
     final valid = prefs.getBool("isPasswordLock") ?? false;
+    print(password + " " + valid.toString());
     if (valid) {
       ref.listen<AppLifecycleState>(
         appLifecycleProvider,
@@ -68,14 +73,35 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
         },
       );
     }
+    var sampleEvents = {};
+    for(int i=0;i<data.year.length;i++) {
+      sampleEvents.addAll(
+          {DateTime.utc(data.year[i], data.month[i], data.day[i]): [data.title[i]]});
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .watch(passwordProvider.notifier)
-          .state = password;
-      ref
-          .watch(passwordValidProvider.notifier)
-          .state = valid;
+      if (!_flg) {
+        _flg = true;
+        ref
+            .watch(passwordProvider.notifier)
+            .state = password;
+        ref
+            .watch(passwordValidProvider.notifier)
+            .state = valid;
+
+        ref
+            .watch(searchIndexListProvider.notifier)
+            .state = [];
+        for (int i = 0; i < _wordList.length; i++) {
+          if (_wordList[i].contains(
+              DateFormat("yyyy/M/d").format(DateTime.now()))) {
+            ref
+                .watch(searchIndexListProvider.notifier)
+                .state
+                .add(i); // 今回の問題はここ！！！
+          }
+        }
+      }
     });
 
     _wordList.clear();
@@ -92,17 +118,10 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
         .of(context)
         .padding
         .top;
-    const sidePadding = 15.0;
+    const sidePadding = .0;
 
-    return WillPopScope(
-        onWillPop: () async {
-          showDialog<void>(
-              context: context,
-              builder: (_) {
-                return AlertQuit(null, ref.watch(fontIndexProvider));
-              });
-          return true;
-        }, child: Focus(
+    return WillPopScope(child:
+      Focus(
         child: GestureDetector(
             onTap: () {
               final FocusScopeNode currentScope = FocusScope.of(context);
@@ -160,167 +179,181 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     const SizedBox(height: 16,),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .center,
-                                      children: <Widget>[
-                                        SizedBox(width: 16,
-                                          height: 16,
-                                          child: Icon(
-                                            Icons.article,
-                                            color: ref.watch(theme3Provider),
-                                            size: 16,),),
-                                        const SizedBox(width: 5,),
-                                        SizedBox(width: 40,
-                                          height: 23,
-                                          child: Text(
-                                              '${data.title.length}',
-                                              style: TextStyle(fontSize: 16,
+                                    TableCalendar(
+                                      headerStyle: HeaderStyle(
+                                        leftChevronVisible: false,
+                                        rightChevronVisible: false,
+                                        titleCentered: true,
+                                        titleTextStyle: TextStyle(
+                                            fontFamily: 'f${ref.watch(
+                                                fontIndexProvider)}',
+                                            color: ref.watch(theme3Provider)),
+                                        formatButtonTextStyle: TextStyle(
+                                            fontFamily: 'f${ref.watch(
+                                                fontIndexProvider)}',
+                                            color: ref.watch(theme3Provider)),
+                                      ),
+                                        eventLoader: (date) {
+                                          return sampleEvents[date] ?? [];
+                                        },
+                                      locale: Localizations
+                                          .localeOf(context)
+                                          .languageCode,
+                                      firstDay: DateTime.utc(2022, 4, 1),
+                                      lastDay: DateTime.utc(2032, 12, 31),
+                                      calendarFormat: ref.watch(
+                                          calendarFormatProvider),
+                                      calendarStyle: CalendarStyle(
+                                        markerDecoration: BoxDecoration(color: ref.watch(darkMord)?Colors.white:Colors.black,shape: BoxShape.circle),
+                                      ),
+                                      calendarBuilders: CalendarBuilders(
+                                          dowBuilder: (_, day) {
+                                            final text = DateFormat.E(
+                                                Localizations
+                                                    .localeOf(context)
+                                                    .languageCode).format(
+                                                day);
+                                            return Center(
+                                              child: Text(
+                                                text,
+                                                style: TextStyle(
+                                                    fontFamily: 'f${ref.watch(
+                                                        fontIndexProvider)}',
+                                                    color: ref.watch(
+                                                        theme3Provider)),
+                                              ),
+                                            );
+                                          },
+                                          todayBuilder: (_, day, __) {
+                                            final text = day.day.toString();
+                                            const margin = EdgeInsets.all(6.0);
+                                            const padding = EdgeInsets.all(0);
+                                            const alignment = Alignment.center;
+                                            const duration = Duration(
+                                                milliseconds: 250);
+                                            return AnimatedContainer(
+                                              duration: duration,
+                                              margin: margin,
+                                              padding: padding,
+                                              decoration: BoxDecoration(
                                                   color: ref.watch(
-                                                      theme3Provider),
-                                                  fontFamily: 'f${ref.watch(
-                                                      fontIndexProvider)}',
-                                                  fontWeight: FontWeight
-                                                      .w400)),),
-                                        Flexible(child: _searchTextField(ref)),
-                                        const SizedBox(width: 8,),
-                                        SizedBox(width: 60,
-                                          height: 60,
-                                          child: IconButton(
-                                            onPressed: () {
-                                              ref
-                                                  .watch(
-                                                  currentPickImageProvider
-                                                      .notifier)
-                                                  .state = [];
-                                              Navigator.of(context).push(
-                                                PageRouteBuilder(
-                                                  settings: const RouteSettings(
-                                                      name: 'edit'),
-                                                  pageBuilder: (context,
-                                                      animation,
-                                                      secondaryAnimation) {
-                                                    return DiaryEditPage(
-                                                        null, '', '', const [],
-                                                        false);
-                                                  },
-                                                  transitionsBuilder: (context,
-                                                      animation,
-                                                      secondaryAnimation,
-                                                      child) {
-                                                    const Offset begin = Offset(
-                                                        0.0, 1.0); // 下から上
-                                                    // final Offset begin = Offset(0.0, -1.0); // 上から下
-                                                    const Offset end = Offset
-                                                        .zero;
-                                                    final Animatable<
-                                                        Offset> tween = Tween(
-                                                        begin: begin, end: end)
-                                                        .chain(CurveTween(
-                                                        curve: Curves
-                                                            .easeInOut));
-                                                    final Animation<
-                                                        Offset> offsetAnimation = animation
-                                                        .drive(tween);
-                                                    return SlideTransition(
-                                                      position: offsetAnimation,
-                                                      child: child,
-                                                    );
-                                                  },
-                                                  transitionDuration: const Duration(
-                                                      milliseconds: 300),
-                                                ),
-                                              );
-                                            },
-                                            icon: Icon(
-                                              Icons.add,
-                                              color: ref.watch(theme3Provider),
-                                              size: 40,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                                      theme1Provider),
+                                                  border: Border.all(
+                                                      color: ref.watch(
+                                                          theme6Provider),
+                                                      width: 1),
+                                                  shape: BoxShape.circle
+                                              ),
+                                              alignment: alignment,
+                                              child: Text(
+                                                text,
+                                                style: TextStyle(
+                                                    fontFamily: 'f${ref.watch(
+                                                        fontIndexProvider)}',
+                                                    color: ref.watch(
+                                                        theme3Provider)),
+                                              ),
+                                            );
+                                          },
+                                          selectedBuilder: (_, DateTime day,
+                                              DateTime focusedDay) {
+                                            final text = day.day.toString();
+                                            const margin = EdgeInsets.all(6.0);
+                                            const padding = EdgeInsets.all(0);
+                                            const alignment = Alignment.center;
+                                            const duration = Duration(
+                                                milliseconds: 250);
+                                            return AnimatedContainer(
+                                              duration: duration,
+                                              margin: margin,
+                                              padding: padding,
+                                              decoration: BoxDecoration(
+                                                color: ref.watch(
+                                                    theme6Provider),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              alignment: alignment,
+                                              child: Text(
+                                                text,
+                                                style: TextStyle(
+                                                    fontFamily: 'f${ref.watch(
+                                                        fontIndexProvider)}',
+                                                    color: ref.watch(
+                                                        theme3Provider)),
+                                              ),
+                                            );
+                                          },
+                                          defaultBuilder: (_, day, day2) {
+                                            final text = day.day.toString();
+                                            return Center(
+                                              child: Text(
+                                                text,
+                                                style: TextStyle(
+                                                    fontFamily: 'f${ref.watch(
+                                                        fontIndexProvider)}',
+                                                    color: ref.watch(
+                                                        theme3Provider)),
+                                              ),
+                                            );
+                                          }
+
+                                      ),
+                                      onFormatChanged: (format) {
+                                        ref
+                                            .watch(
+                                            calendarFormatProvider.notifier)
+                                            .state = format;
+                                      },
+                                      selectedDayPredicate: (day) {
+                                        return isSameDay(_selected, day);
+                                      },
+                                      onDaySelected: (selected, focused) {
+                                        _selected = selected;
+
+                                        ref
+                                            .watch(
+                                            calenderDateProvider.notifier)
+                                            .state = selected;
+                                        ref
+                                            .watch(
+                                            searchIndexListProvider.notifier)
+                                            .state = [];
+                                        for (int i = 0; i < _wordList.length; i++) {
+                                          if (_wordList[i].contains(
+                                              DateFormat("yyyy/M/d").format(
+                                                  selected))) {
+                                            ref
+                                                .watch(searchIndexListProvider
+                                                .notifier)
+                                                .state
+                                                .add(i); // 今回の問題はここ！！！
+                                          }
+                                        }
+                                      },
+                                      focusedDay: ref.watch(
+                                          calenderDateProvider),
                                     ),
                                     const SizedBox(height: 16,),
                                     Expanded(
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                              alignment: Alignment.topCenter,
-                                              child:
-                                              Container(
-                                                  width: 100,
-                                                  height: 120,
-                                                  alignment: Alignment.center,
-                                                  child: Consumer(
-                                                      builder: (context, ref,
-                                                          _) {
-                                                        var curDate = ref.watch(
-                                                            currentDateProvider);
-                                                        return RichText(
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            text: TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                    text: ' ${curDate
-                                                                        .year} \n',
-                                                                    style: TextStyle(
-                                                                      color: ref
-                                                                          .watch(
-                                                                          theme3Provider),
-                                                                      fontSize: 19,
-                                                                      fontWeight: FontWeight
-                                                                          .w300,
-                                                                      fontFamily: 'f${ref
-                                                                          .watch(
-                                                                          fontIndexProvider)}',)),
-                                                                TextSpan(
-                                                                    text: '${curDate
-                                                                        .month}.${curDate
-                                                                        .day}\n',
-                                                                    style: TextStyle(
-                                                                      color: ref
-                                                                          .watch(
-                                                                          theme3Provider),
-                                                                      fontSize: getAppropriateFontSize(
-                                                                          ref
-                                                                              .watch(
-                                                                              fontIndexProvider)) *
-                                                                          1.0,
-                                                                      fontWeight: FontWeight
-                                                                          .w300,
-                                                                      fontFamily: 'f${ref
-                                                                          .watch(
-                                                                          fontIndexProvider)}',)),
-                                                                TextSpan(
-                                                                    text: week[ref
-                                                                        .watch(
-                                                                        weekFormatProvider)][curDate
-                                                                        .weekday],
-                                                                    style: TextStyle(
-                                                                      color: ref
-                                                                          .watch(
-                                                                          theme3Provider),
-                                                                      fontSize: 30,
-                                                                      fontWeight: FontWeight
-                                                                          .w300,
-                                                                      fontFamily: 'f${ref
-                                                                          .watch(
-                                                                          fontIndexProvider)}',))
-                                                              ],
-                                                            )
-                                                        );
-                                                      })
-                                              )
-                                          ),
-                                          Flexible(
-                                              child: _initialized
-                                                  ? _searchListView(ref)
-                                                  : _defaultListView(ref)
-                                          )
-                                        ],
-                                      ),),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: ref.watch(theme2Provider),
+                                          borderRadius: BorderRadius.circular(
+                                              10),),
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(width: 40),
+                                            Flexible(child: Container(
+                                                child: _initialized
+                                                    ? _searchListView(ref)
+                                                    : _defaultListView(ref)
+                                            ),
+                                            ),
+                                            const SizedBox(width: 40),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -333,7 +366,18 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
                 shrinkWrap: false,
                 physics: const NeverScrollableScrollPhysics(),
               ),
-            ))));
+            )
+        )
+      ),
+      onWillPop: ()async{
+        showDialog<void>(
+            context: context,
+            builder: (_) {
+              return AlertQuit(null, ref.watch(fontIndexProvider));
+            });
+        return true;
+      },
+    );
   }
 
 
@@ -365,16 +409,13 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
 
 
   Widget _searchListView(WidgetRef ref) {
-    if (ref
-        .watch(searchIndexListProvider)
-        .isEmpty) {
+    if(ref.watch(searchIndexListProvider).isEmpty){
       return Container();
     }
     return ScrollablePositionedList.builder(
         itemCount: ref
             .watch(searchIndexListProvider)
             .length,
-        padding: const EdgeInsets.only(left: 16),
         itemScrollController: _itemScrollController,
         itemPositionsListener: _itemPositionsListener,
         itemBuilder: (context, int index) {
@@ -393,13 +434,11 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                       image: FileImage(
+                        //  File('/data/user/0/com.forestocean.keepdiary/app_flutter/appBar/images (6).jpg'),
                           File(data.image[index][0])
                       ),
                       colorFilter: ColorFilter.mode(
-                        ref.watch(darkMord)
-                            ? Colors.black.withOpacity(0.5)
-                            : Colors.white.withOpacity(0.5),
-                        BlendMode.srcATop,),
+                        ref.watch(darkMord)?Colors.black.withOpacity(0.5):Colors.white.withOpacity(0.5), BlendMode.srcATop,),
                       fit: BoxFit.cover,
                     )) :
                 BoxDecoration(
@@ -472,6 +511,7 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
 
 
   Widget _defaultListView(WidgetRef ref) {
+    print("default");
     if (!_initialized) {
       ref
           .watch(searchIndexListProvider.notifier)
@@ -486,10 +526,9 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
       m = ref
           .watch(searchIndexListProvider).length - m - 1;
       if (m >= 0) {
-        m =
-        ref
-            .watch(searchIndexListProvider.notifier)
-            .state[m];
+          m =
+          ref
+              .watch(searchIndexListProvider)[m];
         if (m != _lastM) {
           ref
               .watch(currentDateProvider.notifier)
@@ -499,10 +538,15 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
       }
     });
     for (int i = 0; i < _wordList.length; i++) {
-      ref
-          .watch(searchIndexListProvider.notifier)
-          .state
-          .add(i);
+    if (_wordList[i].contains(
+    DateFormat("yyyy/M/d").format(
+    _selected))) {
+    ref
+        .watch(searchIndexListProvider
+        .notifier)
+        .state
+        .add(i); // 今回の問題はここ！！！
+    }
     }
     _initialized = true;
     if(ref.watch(searchIndexListProvider).isEmpty){
@@ -512,7 +556,6 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
         itemCount: ref
             .watch(searchIndexListProvider)
             .length,
-        padding: const EdgeInsets.only(left: 16),
         itemScrollController: _itemScrollController,
         itemPositionsListener: _itemPositionsListener,
         itemBuilder: (context, int index) {
@@ -520,8 +563,7 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
               .watch(searchIndexListProvider)
               .length - index - 1;
           index = ref
-              .watch(searchIndexListProvider.notifier)
-              .state[index];
+              .watch(searchIndexListProvider)[index];
           return Card(
             color: ref.watch(theme2Provider),
             shadowColor: Colors.black,

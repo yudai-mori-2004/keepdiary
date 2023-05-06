@@ -21,6 +21,7 @@ class WeekFormatSetting extends HookConsumerWidget {
         .size
         .height;
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -72,37 +73,38 @@ class WeekFormatSetting extends HookConsumerWidget {
                       height: 60,
                       child:
                       DropdownButton(
+                        dropdownColor: ref.watch(theme1Provider),
                         borderRadius: const BorderRadius.all(
                             Radius.circular(10)),
                         value: ref.watch(weekFormatProvider),
-                        items: const [
+                        items:  [
                           DropdownMenuItem(
                             value: 0,
-                            child: Text('Sun'),
+                            child: Text('Sun',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 1,
-                            child: Text('SUN'),
+                            child: Text('SUN',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 2,
-                            child: Text('Su'),
+                            child: Text('Su',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 3,
-                            child: Text('SU'),
+                            child: Text('SU',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 4,
-                            child: Text('日'),
+                            child: Text('日',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 5,
-                            child: Text('日曜'),
+                            child: Text('日曜',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                           DropdownMenuItem(
                             value: 6,
-                            child: Text('日曜日'),
+                            child: Text('日曜日',style: TextStyle(color: ref.watch(theme4Provider))),
                           ),
                         ],
                         onChanged: (value) {

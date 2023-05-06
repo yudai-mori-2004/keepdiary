@@ -9,6 +9,7 @@ import 'package:keep_diary/setting/theme_color_setting/theme6_color.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import '../main.dart';
 import '../screen/settings_screen.dart';
@@ -75,20 +76,23 @@ class ThemeColorSetting extends HookConsumerWidget {
                         )
                       ]),
                   Expanded(child: SettingsList(
+                    platform: DevicePlatform.android,
+                    brightness: Brightness.light,
+                    lightTheme: SettingsThemeData(
+                      settingsListBackground: ref.watch(theme1Provider),
+                      settingsTileTextColor: ref.watch(theme4Provider),
+                      titleTextColor: ref.watch(theme4Provider),
+                    ),
                     sections: [
                       SettingsSection(
                         title: Text('${textString?.theme}'),
                         tiles: <SettingsTile>[
                           SettingsTile.navigation(
                             leading: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
                               child:
                               Icon(Icons.color_lens, color: ref.watch(
-                                  theme1Provider),),),
-                            title: Text('${textString?.theme1}'),
+                                  theme3Provider),),),
+                            title: Text('${textString?.theme1}',style: TextStyle(color: ref.watch(theme4Provider)),),
                             onPressed: (context) =>
                                 Navigator.push(
                                   context,
@@ -97,98 +101,98 @@ class ThemeColorSetting extends HookConsumerWidget {
                                           Theme1Setting(key: key)),
                                 ),
                           ),
+                          // SettingsTile.navigation(
+                          //   leading: Container(
+                          //     decoration: BoxDecoration(
+                          //       border: Border.all(color: ref.watch(theme3Provider)),
+                          //       borderRadius: BorderRadius.circular(20),
+                          //     ),
+                          //     child:
+                          //     Icon(Icons.color_lens, color: ref.watch(
+                          //         theme2Provider),),),
+                          //   title: Text('${textString?.theme2}'),
+                          //   onPressed: (context) =>
+                          //       Navigator.push(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //             builder: (context) =>
+                          //                 Theme2Setting(key: key)),
+                          //       ),
+                          // ),
+                          // SettingsTile.navigation(
+                          //   leading: Container(
+                          //     decoration: BoxDecoration(
+                          //       border: Border.all(color:ref.watch(theme3Provider)),
+                          //       borderRadius: BorderRadius.circular(20),
+                          //     ),
+                          //     child:
+                          //     Icon(Icons.color_lens, color: ref.watch(
+                          //         theme3Provider),),),
+                          //   title: Text('${textString?.theme3}'),
+                          //   onPressed: (context) =>
+                          //       Navigator.push(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //             builder: (context) =>
+                          //                 Theme3Setting(key: key)),
+                          //       ),
+                          // ),
+                          // SettingsTile.navigation(
+                          //   leading: Container(
+                          //     decoration: BoxDecoration(
+                          //       border: Border.all(color:ref.watch(theme3Provider)),
+                          //       borderRadius: BorderRadius.circular(20),
+                          //     ),
+                          //     child:
+                          //     Icon(Icons.color_lens, color: ref.watch(
+                          //         theme4Provider),),),
+                          //   title: Text('${textString?.theme4}'),
+                          //   onPressed: (context) =>
+                          //       Navigator.push(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //             builder: (context) =>
+                          //                 Theme4Setting(key: key)),
+                          //       ),
+                          // ),
+                          // SettingsTile.navigation(
+                          //   leading: Container(
+                          //     decoration: BoxDecoration(
+                          //       border: Border.all(color: ref.watch(theme3Provider)),
+                          //       borderRadius: BorderRadius.circular(20),
+                          //     ),
+                          //     child:
+                          //     Icon(Icons.color_lens, color: ref.watch(
+                          //         theme5Provider),),),
+                          //   title: Text('${textString?.theme5}'),
+                          //   onPressed: (context) =>
+                          //       Navigator.push(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //             builder: (context) =>
+                          //                 Theme5Setting(key: key)),
+                          //       ),
+                          // ),
+                          // SettingsTile.navigation(
+                          //   leading: Container(
+                          //     decoration: BoxDecoration(
+                          //       border: Border.all(color:ref.watch(theme3Provider)),
+                          //       borderRadius: BorderRadius.circular(20),
+                          //     ),
+                          //     child:
+                          //     Icon(Icons.color_lens, color: ref.watch(
+                          //         theme6Provider),),),
+                          //   title: Text('${textString?.theme6}'),
+                          //   onPressed: (context) =>
+                          //       Navigator.push(
+                          //         context,
+                          //         MaterialPageRoute(
+                          //             builder: (context) =>
+                          //                 Theme6Setting(key: key)),
+                          //       ),
+                          // ),
                           SettingsTile.navigation(
-                            leading: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child:
-                              Icon(Icons.color_lens, color: ref.watch(
-                                  theme2Provider),),),
-                            title: Text('${textString?.theme2}'),
-                            onPressed: (context) =>
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          Theme2Setting(key: key)),
-                                ),
-                          ),
-                          SettingsTile.navigation(
-                            leading: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child:
-                              Icon(Icons.color_lens, color: ref.watch(
-                                  theme3Provider),),),
-                            title: Text('${textString?.theme3}'),
-                            onPressed: (context) =>
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          Theme3Setting(key: key)),
-                                ),
-                          ),
-                          SettingsTile.navigation(
-                            leading: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child:
-                              Icon(Icons.color_lens, color: ref.watch(
-                                  theme4Provider),),),
-                            title: Text('${textString?.theme4}'),
-                            onPressed: (context) =>
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          Theme4Setting(key: key)),
-                                ),
-                          ),
-                          SettingsTile.navigation(
-                            leading: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child:
-                              Icon(Icons.color_lens, color: ref.watch(
-                                  theme5Provider),),),
-                            title: Text('${textString?.theme5}'),
-                            onPressed: (context) =>
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          Theme5Setting(key: key)),
-                                ),
-                          ),
-                          SettingsTile.navigation(
-                            leading: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.white),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child:
-                              Icon(Icons.color_lens, color: ref.watch(
-                                  theme6Provider),),),
-                            title: Text('${textString?.theme6}'),
-                            onPressed: (context) =>
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          Theme6Setting(key: key)),
-                                ),
-                          ),
-                          SettingsTile.navigation(
-                            leading: const Icon(Icons.text_format),
+                            leading:  Icon(Icons.text_format,color:ref.watch(theme3Provider)),
                             title: Text('${textString?.app_bar_color}'),
                             onPressed: (context) =>
                                 Navigator.push(
@@ -198,6 +202,68 @@ class ThemeColorSetting extends HookConsumerWidget {
                                           AppBarColorSetting(key: key)),
                                 ),
                           ),
+                          SettingsTile.switchTile(
+                            leading: Icon(Icons.dark_mode,color:ref.watch(theme3Provider)),
+                            title: Text('${textString?.darkmode}',style: TextStyle(color: ref.watch(theme4Provider))),
+                            initialValue: ref.watch(darkMord),
+                            onToggle: (value) async {
+                              ref.watch(darkMord.notifier).state=value;
+                              var prefs=await SharedPreferences.getInstance();
+                              prefs.setBool('Dark-mode', value);
+                              if(!ref.watch(darkMord)) {
+                                ref
+                                    .watch(theme1Provider.notifier)
+                                    .state = light[ref.watch(themeIndex)][0];
+                                ref
+                                    .watch(theme2Provider.notifier)
+                                    .state = light[ref.watch(themeIndex)][1];
+                                ref
+                                    .watch(theme3Provider.notifier)
+                                    .state = light[ref.watch(themeIndex)][2];
+                                ref
+                                    .watch(theme4Provider.notifier)
+                                    .state = light[ref.watch(themeIndex)][3];
+                                ref
+                                    .watch(theme5Provider.notifier)
+                                    .state = light[ref.watch(themeIndex)][4];
+                                ref
+                                    .watch(theme6Provider.notifier)
+                                    .state = light[ref.watch(themeIndex)][5];
+                                settingData.theme1Provider = light[ref.watch(themeIndex)][0].value;
+                                settingData.theme2Provider = light[ref.watch(themeIndex)][1].value;
+                                settingData.theme3Provider = light[ref.watch(themeIndex)][2].value;
+                                settingData.theme4Provider = light[ref.watch(themeIndex)][3].value;
+                                settingData.theme5Provider = light[ref.watch(themeIndex)][4].value;
+                                settingData.theme6Provider = light[ref.watch(themeIndex)][5].value;
+                              }else{
+                                ref
+                                    .watch(theme1Provider.notifier)
+                                    .state = dark[ref.watch(themeIndex)][0];
+                                ref
+                                    .watch(theme2Provider.notifier)
+                                    .state = dark[ref.watch(themeIndex)][1];
+                                ref
+                                    .watch(theme3Provider.notifier)
+                                    .state = dark[ref.watch(themeIndex)][2];
+                                ref
+                                    .watch(theme4Provider.notifier)
+                                    .state = dark[ref.watch(themeIndex)][3];
+                                ref
+                                    .watch(theme5Provider.notifier)
+                                    .state = dark[ref.watch(themeIndex)][4];
+                                ref
+                                    .watch(theme6Provider.notifier)
+                                    .state = dark[ref.watch(themeIndex)][5];
+                                settingData.theme1Provider = dark[ref.watch(themeIndex)][0].value;
+                                settingData.theme2Provider = dark[ref.watch(themeIndex)][1].value;
+                                settingData.theme3Provider = dark[ref.watch(themeIndex)][2].value;
+                                settingData.theme4Provider = dark[ref.watch(themeIndex)][3].value;
+                                settingData.theme5Provider = dark[ref.watch(themeIndex)][4].value;
+                                settingData.theme6Provider = dark[ref.watch(themeIndex)][5].value;
+                              }
+                              settingDataBox.put(settingDataBoxName, settingData);
+                            },
+                          )
                         ],
                       ),
 

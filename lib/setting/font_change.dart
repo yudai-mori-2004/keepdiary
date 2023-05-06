@@ -22,6 +22,7 @@ class FontSetting extends HookConsumerWidget {
         .size
         .height;
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -67,11 +68,13 @@ class FontSetting extends HookConsumerWidget {
                           ),
                         )
                       ]),
-                  const SizedBox(height: 20,),
-                  SizedBox(
+                  Container(height: 20,color: ref.watch(theme1Provider),),
+                  Container(
                     height: 60,
+                      color:ref.watch(theme1Provider),
                       child:
                       DropdownButton(
+                        dropdownColor: ref.watch(theme1Provider),
                         borderRadius: const BorderRadius.all(Radius.circular(10)),
                         value: _selectedValue,
                         style: TextStyle(
@@ -81,7 +84,7 @@ class FontSetting extends HookConsumerWidget {
                             DropdownMenuItem(
                               value: i,
                               child: Text('${textString?.this_font} $i',
-                                style: TextStyle(fontFamily: 'f$i',),
+                                style: TextStyle(fontFamily: 'f$i',color: ref.watch(theme4Provider)),
                               ),
                             ),
                         ],
@@ -102,6 +105,7 @@ class FontSetting extends HookConsumerWidget {
                           padding: const EdgeInsets.all(20), child: Text(
                         '${textString?.font_ex}',
                         style: TextStyle(
+                        color: ref.watch(theme4Provider),
                           fontSize: 30,
                           fontFamily: 'f${ref.watch(fontIndexProvider)}',),)
                       )

@@ -1,21 +1,19 @@
 import 'package:dart_openai/openai.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/date_symbol_data_file.dart';
 import 'package:keep_diary/helper/file_helper.dart';
-import 'package:keep_diary/screen/bookcover_screen.dart';
 import 'package:keep_diary/screen/diary_edit_screen.dart';
 import 'package:keep_diary/screen/empty.dart';
 import 'package:keep_diary/structure/data_structure.dart';
-import 'package:keep_diary/screen/gpt_input.dart';
 import 'package:keep_diary/structure/setting_data_structure.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:table_calendar/table_calendar.dart';
 
 final onSearchProvider = StateProvider((ref) => false);
 final StateProvider<List<int>> searchIndexListProvider = StateProvider((ref) => []);
@@ -48,7 +46,11 @@ final StateProvider<bool>notificationEnabled=StateProvider((ref) => false);
 final StateProvider<String>passwordProvider=StateProvider((ref) => '');
 final StateProvider<bool>passwordValidProvider=StateProvider((ref) => false);
 final StateProvider<String>signStatusProvider=StateProvider((ref) => '');
+final StateProvider<DateTime>calenderDateProvider=StateProvider((ref) => DateTime.now());
+final StateProvider<CalendarFormat> calendarFormatProvider=StateProvider((ref) => CalendarFormat.month);
 final StateProvider<bool>adLoadedProvider=StateProvider((ref) => false);
+final StateProvider<bool>darkMord=StateProvider((ref) => false);
+final StateProvider<int>themeIndex=StateProvider((ref) => 0);
 
 final appLifecycleProvider = Provider<AppLifecycleState>((ref) {
   final observer = _AppLifecycleObserver((value) => ref.state = value);
@@ -117,14 +119,14 @@ class MainApp extends StatelessWidget {
 
       title: '',
       theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Colors.black,
+        brightness: Brightness.light,
+        primaryColor: Colors.white,
         dividerColor: Colors.white,
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Colors.black,
+        brightness: Brightness.light,
+        primaryColor: Colors.white,
         dividerColor: Colors.white,
         useMaterial3: true,
       ),

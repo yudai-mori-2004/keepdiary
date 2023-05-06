@@ -21,6 +21,7 @@ class ListHeightSetting extends HookConsumerWidget {
         .size
         .height;
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -72,6 +73,7 @@ class ListHeightSetting extends HookConsumerWidget {
                       height: 60,
                       child:
                       DropdownButton(
+                        dropdownColor: ref.watch(theme1Provider),
                         borderRadius: const BorderRadius.all(
                             Radius.circular(10)),
                         value: ref.watch(listHeightProvider),
@@ -79,7 +81,7 @@ class ListHeightSetting extends HookConsumerWidget {
                           for(int i = 40; i <= 300; i+=5)
                             DropdownMenuItem(
                               value: i,
-                              child: Text('$i${i == 80 ? ' (default)' : ''}',
+                              child: Text('$i${i == 80 ? ' (default)' : ''}',style: TextStyle(color: ref.watch(theme4Provider))
                               ),
                             ),
                         ],

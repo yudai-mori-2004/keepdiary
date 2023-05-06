@@ -20,6 +20,7 @@ class NotificatikonSetting extends HookConsumerWidget {
         .height;
 
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -61,6 +62,7 @@ class NotificatikonSetting extends HookConsumerWidget {
                         )
                       ]),
                   Expanded(child: SettingsList(
+                    platform: DevicePlatform.android,
                     sections: [
                       SettingsSection(
                         title:  Text('${textString?.general}'),

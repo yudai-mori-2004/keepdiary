@@ -78,12 +78,19 @@ class BackupCreate extends HookConsumerWidget {
                         )
                       ]),
                   Flexible(child: SettingsList(
+                      platform: DevicePlatform.android,
+                      brightness: Brightness.light,
+                      lightTheme: SettingsThemeData(
+                        settingsListBackground: ref.watch(theme1Provider),
+                        settingsTileTextColor: ref.watch(theme4Provider),
+                        titleTextColor: ref.watch(theme4Provider),
+                      ),
                       sections: [
                         SettingsSection(
                             title: Text('${textString?.backup_attention}'),
                             tiles: <SettingsTile>[
                               SettingsTile.navigation(
-                                  leading: const Icon(Icons.backup),
+                                  leading: Icon(Icons.backup,color: ref.watch(theme3Provider)),
                                   title: Text('${textString?.backup_google}'),
                                   onPressed: (context) async {
                                     await _backUpAsZip(ref, textString);

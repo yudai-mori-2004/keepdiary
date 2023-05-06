@@ -49,11 +49,11 @@
   "@font": {
     "description": "rate title label"
   },
-  "format_of_week": "Format of week",
+  "format_of_week": "Week format of home",
   "@format_of_week": {
     "description": "rate title label"
   },
-  "format_of_date": "Format of date",
+  "format_of_date": "Date format of home",
   "@format_of_date": {
     "description": "rate title label"
   },
@@ -65,7 +65,7 @@
   "@font_ex": {
     "description": "rate title label"
   },
-  "theme1": "Background color",
+  "theme1": "Theme color",
   "@theme1": {
     "description": "rate title label"
   },
@@ -87,6 +87,10 @@
   },
   "theme6": "Accent",
   "@theme6": {
+    "description": "rate title label"
+  },
+  "darkmode": "Dark mode",
+  "@darkmode": {
     "description": "rate title label"
   },
   "text_size": "Font size",
@@ -277,7 +281,7 @@
   "@restart": {
     "description": "rate title label"
   },
-  "ad_failed": "Ad failed to load",
+  "ad_failed": "Unable to connect to server. Please check your network.",
   "@ad_failed": {
     "description": "rate title label"
   },
@@ -319,6 +323,10 @@
   },
   "send": "Send",
   "@send": {
+    "description": "rate title label"
+  },
+  "quit": "Do you want to exit the app?",
+  "@quit": {
     "description": "rate title label"
   }
 }

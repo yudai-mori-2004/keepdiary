@@ -77,12 +77,19 @@ class BackupRestore extends HookConsumerWidget {
                       ]),
                   Flexible(
                       child: SettingsList(
+                          platform: DevicePlatform.android,
+                          brightness: Brightness.light,
+                          lightTheme: SettingsThemeData(
+                            settingsListBackground: ref.watch(theme1Provider),
+                            settingsTileTextColor: ref.watch(theme4Provider),
+                            titleTextColor: ref.watch(theme4Provider),
+                          ),
                           sections: [
                             SettingsSection(
                                 title: Text('${textString?.backup_attention2}'),
                                 tiles: <SettingsTile>[
                                   SettingsTile.navigation(
-                                      leading: const Icon(Icons.download_for_offline),
+                                      leading:Icon(Icons.download_for_offline,color: ref.watch(theme3Provider)),
                                       title: Text(
                                           '${textString?.delete_restore}'),
                                       onPressed: (context) {
@@ -91,7 +98,7 @@ class BackupRestore extends HookConsumerWidget {
                                       }
                                   ),
                                   SettingsTile.navigation(
-                                      leading: const Icon(Icons.download_for_offline),
+                                      leading:  Icon(Icons.download_for_offline,color: ref.watch(theme3Provider)),
                                       title: Text(
                                           '${textString?.leave_restore}'),
                                       onPressed: (context) {

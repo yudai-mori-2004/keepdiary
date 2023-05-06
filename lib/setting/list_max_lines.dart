@@ -21,6 +21,7 @@ class ListMaxLinesSetting extends HookConsumerWidget {
         .size
         .height;
     return Scaffold(
+      backgroundColor: ref.watch(theme1Provider),
         body:
         SizedBox(
             height: deviceHeight,
@@ -72,6 +73,7 @@ class ListMaxLinesSetting extends HookConsumerWidget {
                       height: 60,
                       child:
                       DropdownButton(
+                        dropdownColor: ref.watch(theme1Provider),
                         borderRadius: const BorderRadius.all(
                             Radius.circular(10)),
                         value: ref.watch(listMaxLinesProvider),
@@ -79,7 +81,8 @@ class ListMaxLinesSetting extends HookConsumerWidget {
                           for(int i = 1; i <= 30; i++)
                             DropdownMenuItem(
                               value: i,
-                              child: Text('$i${i == 3 ? ' (default)' : ''}',
+                              child: Text('$i${i == 3 ? ' (default)' : ''}'
+                                  ,style: TextStyle(color: ref.watch(theme4Provider))
                               ),
                             ),
                         ],

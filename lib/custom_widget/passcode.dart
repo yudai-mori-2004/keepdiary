@@ -11,16 +11,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 import '../screen/bookcover_screen.dart';
+import '../screen/home_page.dart';
 import 'comfirm_pass.dart';
 
-class PasscodeSetScreen extends StatefulWidget {
+class PasscodeSetScreen extends ConsumerStatefulWidget {
   const PasscodeSetScreen({super.key});
 
   @override
   _PasscodeState createState() => _PasscodeState();
 }
 
-class _PasscodeState extends State<PasscodeSetScreen> {
+class _PasscodeState extends ConsumerState<PasscodeSetScreen> {
 
   final StreamController<bool> _verificationNotifier = StreamController<bool>.broadcast();
   int passwordDigits = 4; //パスワードの桁数
@@ -53,7 +54,7 @@ class _PasscodeState extends State<PasscodeSetScreen> {
     return  PasscodeScreen(
       title: Column(
         children: <Widget>[
-          const Icon(Icons.lock, size: 30),
+          Icon(Icons.lock, size: 30,color: ref.watch(theme4Provider),),
           Text('${textString?.input_pass}',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 15,color:Theme.of(context).dividerColor ),
@@ -62,30 +63,30 @@ class _PasscodeState extends State<PasscodeSetScreen> {
       ),
       passwordDigits: passwordDigits,
       circleUIConfig: CircleUIConfig(
-        borderColor: Theme.of(context).dividerColor,
-        fillColor: Theme.of(context).dividerColor,
+        borderColor: ref.watch(theme3Provider),
+        fillColor: ref.watch(theme3Provider),
         circleSize: 20,
       ),
       keyboardUIConfig: KeyboardUIConfig(
-        primaryColor: Theme.of(context).dividerColor,
-        digitTextStyle: const TextStyle(fontSize: 25),
+        primaryColor: ref.watch(theme3Provider),
+        digitTextStyle: TextStyle(color: ref.watch(theme4Provider),fontSize: 25),
         deleteButtonTextStyle: const TextStyle(fontSize: 15),
       ),
       passwordEnteredCallback: _onPasscodeEntered,//パスワードが入力された時の処理
-      deleteButton: Icon(Icons.backspace, size: 25.0,color:Theme.of(context).dividerColor ,),
+      deleteButton: Icon(Icons.backspace, size: 25.0,color:ref.watch(theme3Provider),),
       cancelButton:  ElevatedButton(
         style: ElevatedButton.styleFrom(
            foregroundColor: Colors.grey,
-           backgroundColor: Colors.white,
+           backgroundColor: ref.watch(theme2Provider),
           shape: const StadiumBorder(),
         ),
         onPressed: () { _onPasscodeCancelled(); },
         child: Text('${textString?.free_lock}',
-            style: const TextStyle(color: Colors.black)
+            style: TextStyle(color: ref.watch(theme3Provider))
         ),
       ), //パスワードが入力がキャンセルされた時の処理
       shouldTriggerVerification: _verificationNotifier.stream,
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: ref.watch(theme1Provider),
     );
   }
 
@@ -107,7 +108,7 @@ class _PasscodeState extends State<PasscodeSetScreen> {
           settings: const RouteSettings(name: 'book'),
           pageBuilder: (context, animation,
               secondaryAnimation) {
-            return const BookCoverPage();
+            return HomePage();
           },
           transitionsBuilder: (context,
               animation,

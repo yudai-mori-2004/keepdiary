@@ -233,6 +233,10 @@
   "@backup_attention4": {
     "description": "rate title label"
   },
+  "backup_attention5": "Backup in progress...",
+  "@backup_attention5": {
+    "description": "rate title label"
+  },
   "backgpt": "Would you like to overwrite this statement in your diary?",
   "@backgpt": {
     "description": "rate title label"

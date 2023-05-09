@@ -475,7 +475,7 @@ ${ref.watch(gptInputProvider)}''';
                                   backgroundColor: ref.watch(theme6Provider),
                                   shape: const StadiumBorder(),
                                 ),
-                                onPressed: () async {
+                                onPressed:isWaiting.value?null: () async {
                                   if (messageController.text.isEmpty) {
                                     Fluttertoast.cancel();
                                     Fluttertoast.showToast(
@@ -483,7 +483,7 @@ ${ref.watch(gptInputProvider)}''';
                                       toastLength: Toast.LENGTH_SHORT,
                                     );
                                   } else {
-                                    if(rewardCount==0) {
+                                    if (rewardCount == 0) {
                                       if (ref.watch(adLoadedProvider)) {
                                         rewardedAd.show(onUserEarnedReward: (
                                             AdWithoutView ad,
@@ -499,13 +499,13 @@ ${ref.watch(gptInputProvider)}''';
                                               rewardItem.amount.toInt();
                                         }, textString, ref);
                                       }
-                                    }else {
-                                      rewardCount--;
-                                      isWaiting.value = true;
-                                      print('Template$template');
-                                      await ref.read(messagesProvider.notifier).sendMessage(template);
-                                      isWaiting.value = false;
                                     }
+                                    rewardCount--;
+                                    isWaiting.value = true;
+                                    print('Template$template');
+                                    await ref.read(messagesProvider.notifier)
+                                        .sendMessage(template);
+                                    isWaiting.value = false;
                                   }
                                 },
                                 child: Text('${textString?.gpt_write}',

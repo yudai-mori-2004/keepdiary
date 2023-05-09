@@ -129,6 +129,9 @@ class BackupCreate extends HookConsumerWidget {
               .state = 'No data';
           return;
         }
+        ref
+            .watch(logProvider.notifier)
+            .state = '${textString?.backup_attention5}';
       }else{
         ref
             .watch(logProvider.notifier)
@@ -148,6 +151,9 @@ class BackupCreate extends HookConsumerWidget {
 
     List<FileSystemEntity> fileEntityO = Directory(
         '${FileHelper.fileHelper.localPath}/diary').listSync();
+    List<FileSystemEntity> fileEntity1 = Directory(
+        '${FileHelper.fileHelper.localPath}/appBar').listSync();
+    fileEntityO.addAll(fileEntity1);
     fileEntityO.removeWhere((elementO) => elementO.path.endsWith(".hive"));
     fileEntityO.add(File(dataBox.path!));
     fileEntityO.add(File(settingDataBox.path!));

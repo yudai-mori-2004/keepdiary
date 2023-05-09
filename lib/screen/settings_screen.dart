@@ -315,6 +315,8 @@ class SettingsPage extends HookConsumerWidget {
       ref
           .watch(appBarImagePath.notifier)
           .state = savedPath;
+      settingData.appBarImagePath=savedPath;
+      settingDataBox.put(settingDataBoxName, settingData);
       print(appBarImagePath);
     } catch (e) {
       print('Failed to pick image: $e');

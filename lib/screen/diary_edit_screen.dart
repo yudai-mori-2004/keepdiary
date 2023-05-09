@@ -401,13 +401,14 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                 if(ref
                     .watch(currentPickImageProvider)
                     .isNotEmpty)
-                  SingleChildScrollView(
+    Container(
+    height: 100,
+    width: deviceWidth,
+    color: ref.watch(theme2Provider),
+    child:
+    SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Container(
-                          height: 100,
-                          width: deviceWidth,
-                          color: ref.watch(theme2Provider),
-                          child: Row(
+                      child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 for(int i = 0; i < ref
@@ -453,7 +454,7 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                     },
                                   ),
                               ])
-                      )),
+                      ),),
                 Container(
                     color: ref.watch(theme2Provider),
                     width: deviceWidth,
@@ -600,22 +601,24 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
       print(_imageSaved);
       _imageSaved = false;
       final localPath = FileHelper.fileHelper.localPath;
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      final dir = await FileHelper.fileHelper.createDir(
-          Directory('$localPath/diary'));
-      final im = File(image.path);
-      final savedPath = await FileHelper.fileHelper.saveImageAt(im, dir);
-      var vs = ref.watch(currentPickImageProvider);
-      vs.add(savedPath);
-      ref
-          .watch(currentPickImageProvider.notifier)
-          .state = [...vs];
-      e_image = [...vs];
-      _imageSaved = true;
-      isChanged=true;
-      print(_imageSaved);
-      print(savedPath);
+      final multi_image = await ImagePicker().pickMultiImage();
+      if (multi_image.isEmpty) return;
+      for(XFile image in multi_image) {
+        final dir = await FileHelper.fileHelper.createDir(
+            Directory('$localPath/diary'));
+        final im = File(image.path);
+        final savedPath = await FileHelper.fileHelper.saveImageAt(im, dir);
+        var vs = ref.watch(currentPickImageProvider);
+        vs.add(savedPath);
+        ref
+            .watch(currentPickImageProvider.notifier)
+            .state = [...vs];
+        e_image = [...vs];
+        _imageSaved = true;
+        isChanged = true;
+        print(_imageSaved);
+        print(savedPath);
+      }
     } catch (e) {
       print('Failed to pick image: $e');
     }
@@ -634,18 +637,18 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
     }
   }
 
-  void saveEditing() {
-    prefs.setString("e_title", e_title);
-    prefs.setString('e_text', e_text);
-    prefs.setStringList('e_image',e_image );
-    prefs.setInt('e_height', e_height);
+  Future<void> saveEditing() async {
+    await prefs.setString("e_title", e_title);
+    await prefs.setString('e_text', e_text);
+    await prefs.setStringList('e_image',e_image );
+    await prefs.setInt('e_height', e_height);
   }
 
-  void removeEditing() {
-    prefs.remove("e_title");
-    prefs.remove('e_text');
-    prefs.remove('e_image');
-    prefs.remove('e_height');
+  Future<void> removeEditing() async {
+    await prefs.remove("e_title");
+    await prefs.remove('e_text');
+    await prefs.remove('e_image');
+    await prefs.remove('e_height');
     e_title='';
     e_image=[];
     e_text='';

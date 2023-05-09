@@ -59,6 +59,7 @@
   "backup_attention2": "\"DiaryBackup\"から始まるzipファイルを選択してください",
   "backup_attention3": "バックアップデータは、端末のダウンロードフォルダーに保存されます",
   "backup_attention4": "バックアップデータはこのアプリのフォルダ内に保存されます",
+  "backup_attention5": "バックアップ中です",
   "backgpt": "上書きされますがよろしいですか？",
   "backup_google": "Zip形式でバックアップをとる",
   "restore_google": "Zipファイルから日記を復元する",

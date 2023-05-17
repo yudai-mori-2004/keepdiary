@@ -7,10 +7,11 @@ import '../screen/bookcover_screen.dart';
 import '../screen/home_page.dart';
 
 class AlertDelete extends StatelessWidget {
-  AlertDelete(Key? key,int i,int f) : super(key: key){index=i;font=f;}
+  AlertDelete(Key? key,int i,int f,Function fun) : super(key: key){index=i;font=f;function=fun;}
 
   late int index;
   late int font;
+  late Function function;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +30,7 @@ class AlertDelete extends StatelessWidget {
           onTap: () {
             data.removeAt(index);
             dataBox.put(dataBoxName, data);
+            function.call();
 
             Navigator.of(context).pushAndRemoveUntil(
                 PageRouteBuilder(

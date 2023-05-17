@@ -21,18 +21,23 @@ import 'home_page.dart';
 
 
 class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
-  DiaryReEditPage(Key? key,this.title,this.text,this.images,this.isChanged) : super(key: key);
+  DiaryReEditPage(Key? key,this.title,this.text,this.images,this.isChanged,this.gptMessage,this.gptText,this.gptTitle) : super(key: key);
   static const appBarHeight = 60.0;
 
   bool isChanged=false;
+  int index=0;
   String title='';
   String text='';
+  String gptMessage='';
+  String gptTitle='';
+  String gptText='';
   List<String>images=[];
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textString = AppLocalizations.of(context);
-    final index = ref.watch(currentDiaryProvider);
+   index = ref.watch(currentDiaryProvider);
     double deviceHeight = MediaQuery
         .of(context)
         .size
@@ -48,6 +53,9 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
     final controller1 = useTextEditingController();
     controller1.value = controller1.value.copyWith(text: text);
 
+    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance.addObserver(this);
+
     return WillPopScope(
 
         onWillPop: () async {
@@ -61,6 +69,8 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                         data.text[index] = text;
                         data.image[index] = images;
                         dataBox.put(dataBoxName, data);
+                        removeEditing();
+
                         Navigator.of(context)
                             .pushAndRemoveUntil(
                           PageRouteBuilder(
@@ -149,6 +159,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                             dataBox.put(
                                                                 dataBoxName,
                                                                 data);
+                                                            removeEditing();
                                                             Navigator.of(
                                                                 context)
                                                                 .pushAndRemoveUntil(
@@ -242,7 +253,10 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                             ref.watch(
                                                                 currentDiaryProvider),
                                                             ref.watch(
-                                                                fontIndexProvider));
+                                                                fontIndexProvider),
+                                                            (){
+                                                          removeEditing();
+                                                            });
                                                       });
                                                 }
                                             ),
@@ -374,6 +388,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                             color: ref.watch(theme5Provider),
                                           ),
                                           onChanged: (String s) {
+                                            print('re_edit');
                                             text = s;
                                             isChanged = true;
                                           },
@@ -463,7 +478,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                         pageBuilder: (context, animation,
                                             secondaryAnimation) {
                                           return HomeScreen(
-                                              key, title, text, images, true);
+                                              key,gptTitle.isEmpty?title:gptTitle,gptText.isEmpty?text:gptText, images, true,gptMessage);
                                         },
                                         transitionsBuilder: (context, animation,
                                             secondaryAnimation, child) {
@@ -506,6 +521,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                   data.text[index] = text;
                                   data.image[index] = images;
                                   dataBox.put(dataBoxName, data);
+                                  removeEditing();
 
                                   Navigator.of(context).pushAndRemoveUntil(
                                       PageRouteBuilder(
@@ -600,5 +616,40 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
     } catch (e) {
       print('Failed to pick image: $e');
     }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.paused:
+        saveEditing();
+        break;
+      case AppLifecycleState.resumed:
+        break;
+    }
+  }
+
+
+  Future<void> saveEditing() async {
+    await prefs.setInt("e_index", index);
+
+    await prefs.setString("e_title", title);
+    await prefs.setString('e_text', text);
+    await prefs.setStringList('e_image',images );
+    await prefs.setInt('e_height', 80);
+  }
+
+  Future<void> removeEditing() async {
+    await prefs.remove("e_index");
+
+    await prefs.remove("e_title");
+    await prefs.remove('e_text');
+    await prefs.remove('e_image');
+    await prefs.remove('e_height');
+    await prefs.remove("e_gpt");
+    await prefs.remove("e_gpt_text");
+    await prefs.remove("e_gpt_title");
   }
 }

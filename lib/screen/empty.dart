@@ -205,16 +205,16 @@ class EmptyState extends ConsumerState<EmptyPage> {
           .watch(notificationEnabled.notifier)
           .state = settingData.notificationEnabled;
 
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-              settings: const RouteSettings(name: 'book'),
-              builder: (context) {
-                return valid
-                    ? FirstInputPassword(password: password)
-                    : HomePage();
-              }
-          )
-      );
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+                settings: const RouteSettings(name: 'book'),
+                builder: (context) {
+                  return valid
+                      ? FirstInputPassword(password: password)
+                      : HomePage();
+                }
+            )
+        );
 
       await _cancelNotification();
       await _requestPermissions();

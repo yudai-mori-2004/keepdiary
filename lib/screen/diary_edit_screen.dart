@@ -32,7 +32,7 @@ late int e_height=80;
 bool _imageSaved=true;
 
 class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
-  DiaryEditPage(Key? key,String title,String text,List<String> images,bool changed) : super(key: key){
+  DiaryEditPage(Key? key,String title,String text,List<String> images,bool changed,this.gptMessage,this.gptText,this.gptTitle) : super(key: key){
     e_title=title;
     e_text=text;
     e_image=images;
@@ -40,6 +40,9 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
   }
   static const appBarHeight = 60.0;
   bool isChanged=false;
+  late String gptMessage;
+  late String gptTitle;
+  late String gptText;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,12 +71,12 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
         .size
         .width;
 
-
     final controller0 = useTextEditingController();
     controller0.value = controller0.value.copyWith(text: e_title);
 
     final controller1 = useTextEditingController();
     controller1.value = controller1.value.copyWith(text: e_text);
+
 
     return WillPopScope(
         onWillPop: ()async {
@@ -274,7 +277,9 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                 context: context,
                                                 builder: (_) {
                                                   return AlertDeleteEdit(key,
-                                                      (){removeEditing();},
+                                                          () {
+                                                        removeEditing();
+                                                      },
                                                       ref.watch(
                                                           fontIndexProvider));
                                                 });
@@ -477,7 +482,10 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                   PageRouteBuilder(
                                     pageBuilder: (context, animation,
                                         secondaryAnimation) {
-                                      return HomeScreen(key,e_title,e_text,e_image,false);
+                                      return HomeScreen(key,
+                                          gptTitle.isEmpty ? e_title : gptTitle,
+                                          gptText.isEmpty ? e_text : gptText,
+                                          e_image, false, gptMessage);
                                     },
                                     transitionsBuilder: (context, animation,
                                         secondaryAnimation, child) {
@@ -485,9 +493,11 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                       const double end = 1.0;
                                       final Animatable<double> tween = Tween(
                                           begin: begin, end: end)
-                                          .chain(CurveTween(curve: Curves.linear));
+                                          .chain(
+                                          CurveTween(curve: Curves.linear));
                                       final Animation<
-                                          double> doubleAnimation = animation.drive(
+                                          double> doubleAnimation = animation
+                                          .drive(
                                           tween);
                                       return FadeTransition(
                                         opacity: doubleAnimation,
@@ -638,6 +648,8 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
   }
 
   Future<void> saveEditing() async {
+    await prefs.setInt("e_index", -1);
+
     await prefs.setString("e_title", e_title);
     await prefs.setString('e_text', e_text);
     await prefs.setStringList('e_image',e_image );
@@ -645,6 +657,8 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
   }
 
   Future<void> removeEditing() async {
+    await prefs.remove("e_index");
+
     await prefs.remove("e_title");
     await prefs.remove('e_text');
     await prefs.remove('e_image');

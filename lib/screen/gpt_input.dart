@@ -45,10 +45,11 @@ class Messages extends _$Messages {
 }
 
 
-class HomeScreen extends HookConsumerWidget {
-  HomeScreen(Key? key,this.title,this.text,this.images,this.isRe) : super(key: key) {
+class HomeScreen extends HookConsumerWidget  {
+  HomeScreen(Key? key,this.title,this.text,this.images,this.isRe,this.gptInitMessage) : super(key: key) {
     gptTitle = title;
     gptText = text;
+    messageController.value=messageController.value.copyWith(text: gptInitMessage);
     messagesProvider=messagesProvider = AutoDisposeNotifierProvider<Messages,
         List<OpenAIChatCompletionChoiceMessageModel>>.internal(
       Messages.new,
@@ -65,6 +66,10 @@ class HomeScreen extends HookConsumerWidget {
   List<String>images=[];
   String gptTitle='';
   String gptText='';
+  int index=0;
+
+  final messageController = useTextEditingController();
+  String gptInitMessage='';
 
   bool changed=false;
   bool isRe=false;
@@ -72,29 +77,28 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textString = AppLocalizations.of(context);
-    final messageController = useTextEditingController();
     final controller0 = useTextEditingController();
     final controller1 = useTextEditingController();
-selfIntroduce=ref.watch(gptIntroduce);
+    selfIntroduce = ref.watch(gptIntroduce);
     var message = ref
         .watch(messagesProvider)
         .isNotEmpty ? ref
         .watch(messagesProvider)
         .last
         .content : '';
-    message=message.contains(
+    message = message.contains(
         '''## template
 "::::[Title of diary]::::[Write diary here]::::"'''
-    )?'':message;
+    ) ? '' : message;
 
-    if (message.isNotEmpty&&ref.watch(adLoadedProvider)) {
+    if (message.isNotEmpty && ref.watch(adLoadedProvider)) {
       var vs = message.split(':');
       vs.removeWhere((s) => s == '');
       vs.removeWhere((s) => s == '\n');
       vs.removeWhere((s) => s == '"');
       int i = 0;
       for (var element in vs) {
-        element=element.replaceAll('"', '');
+        element = element.replaceAll('"', '');
         print('$i' + '  ' + element);
         if (i == 0) {
           controller0.value =
@@ -107,7 +111,7 @@ selfIntroduce=ref.watch(gptIntroduce);
         }
         i++;
       }
-    }else {
+    } else {
       controller0.value =
           controller0.value.copyWith(text: gptTitle);
       controller1.value =
@@ -124,6 +128,7 @@ selfIntroduce=ref.watch(gptIntroduce);
         .width;
 
     final isWaiting = useState(false);
+    index=ref.watch(currentDiaryProvider);
 
     String language = isoLangs[ Localizations
         .localeOf(context)
@@ -145,14 +150,14 @@ ${ref.watch(gptInputProvider)}''';
 
     return WillPopScope(
 
-        onWillPop: ()async {
-          if(changed) {
+        onWillPop: () async {
+          if (changed) {
             showDialog<void>(
                 context: context,
                 builder: (_) {
                   return AlertGPTBack(key, () {
-                    gptTitle=controller0.text;
-                    gptText=controller1.text;
+                    gptTitle = controller0.text;
+                    gptText = controller1.text;
                     if (isRe) {
                       Navigator.of(context)
                           .pushAndRemoveUntil(
@@ -162,11 +167,16 @@ ${ref.watch(gptInputProvider)}''';
                               animation,
                               secondaryAnimation) {
                             return DiaryReEditPage(
-                                key,'$title\n$gptTitle',
-                                '$text\n$gptText',images,true);
+                                key,
+                                '$title\n$gptTitle',
+                                '$text\n$gptText',
+                                images,
+                                true,
+                                '',
+                                '$text\n$gptText',
+                                '$title\n$gptTitle');
                           },
-                          transitionsBuilder: (
-                              context,
+                          transitionsBuilder: (context,
                               animation,
                               secondaryAnimation,
                               child) {
@@ -194,7 +204,9 @@ ${ref.watch(gptInputProvider)}''';
                               milliseconds: 300),
                         ),
                             (Route<dynamic> route) {
-                          if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
+                          if (route.settings.name != null && (route.settings
+                              .name! == 'view' || route.settings.name! ==
+                              'book')) {
                             return true;
                           }
                           return false;
@@ -209,11 +221,16 @@ ${ref.watch(gptInputProvider)}''';
                               animation,
                               secondaryAnimation) {
                             return DiaryEditPage(
-                                key, '$title\n$gptTitle',
-                                '$text\n$gptText', images,true);
+                                key,
+                                '$title\n$gptTitle',
+                                '$text\n$gptText',
+                                images,
+                                true,
+                                '',
+                                '$text\n$gptText',
+                                '$title\n$gptTitle');
                           },
-                          transitionsBuilder: (
-                              context,
+                          transitionsBuilder: (context,
                               animation,
                               secondaryAnimation,
                               child) {
@@ -241,493 +258,599 @@ ${ref.watch(gptInputProvider)}''';
                               milliseconds: 300),
                         ),
                             (Route<dynamic> route) {
-                          if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
+                          if (route.settings.name != null && (route.settings
+                              .name! == 'view' || route.settings.name! ==
+                              'book')) {
                             return true;
                           }
                           return false;
                         },
                       );
                     }
-                      },
+                  },
                       ref.watch(
                           fontIndexProvider));
                 });
-          }else {
+          } else {
             Navigator.of(context).pop();
           }
           return true;
         },
-    child: Scaffold(
-        body:
-        Container(
-          height: deviceHeight,
-          color: ref.watch(theme1Provider),
-          child: Column(
-              children: [
-                Expanded(
-                    child: SingleChildScrollView(
-                        child: Column(
-                            children: [
-                              CustomScrollView(
-                                  shrinkWrap: true,
-                                  primary: false,
-                                  slivers: [
-                                    SliverAppBar(
-                                      backgroundColor: Colors.blueAccent
-                                          .withOpacity(0.3),
-                                      floating: true,
-                                      pinned: true,
-                                      snap: false,
-                                      expandedHeight: appBarHeight,
-                                      toolbarHeight: appBarHeight,
-                                      leading: IconButton(
-                                        icon: const Icon(Icons.close),
-                                        color: ref.watch(
-                                            appBarTitleColorProvider),
-                                        onPressed: () {
-                                          if(changed) {
-                                            showDialog<void>(
-                                                context: context,
-                                                builder: (_) {
-                                                  return AlertGPTBack(key, () {
-                                                    gptTitle=controller0.text;
-                                                    gptText=controller1.text;
-                                                    if (isRe) {
-                                                      Navigator.of(context)
-                                                          .pushAndRemoveUntil(
-                                                        PageRouteBuilder(
-                                                          settings: const RouteSettings(name: 'edit'),
-                                                          pageBuilder: (context,
-                                                              animation,
-                                                              secondaryAnimation) {
-                                                            return DiaryReEditPage(
-                                                                key,'$title\n$gptTitle',
-                                                                '$text\n$gptText',images,true);
-                                                          },
-                                                          transitionsBuilder: (
-                                                              context,
-                                                              animation,
-                                                              secondaryAnimation,
-                                                              child) {
-                                                            const Offset begin = Offset(
-                                                                0.0, 1.0); // 下から上
-                                                            // final Offset begin = Offset(0.0, -1.0); // 上から下
-                                                            const Offset end = Offset
-                                                                .zero;
-                                                            final Animatable<
-                                                                Offset> tween = Tween(
-                                                                begin: begin,
-                                                                end: end)
-                                                                .chain(CurveTween(
-                                                                curve: Curves
-                                                                    .easeInOut));
-                                                            final Animation<
-                                                                Offset> offsetAnimation = animation
-                                                                .drive(tween);
-                                                            return SlideTransition(
-                                                              position: offsetAnimation,
-                                                              child: child,
-                                                            );
-                                                          },
-                                                          transitionDuration: const Duration(
-                                                              milliseconds: 300),
-                                                        ),
-                                                            (Route<dynamic> route) {
-                                                          if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
-                                                            return true;
-                                                          }
-                                                          return false;
-                                                        },
-                                                      );
-                                                    } else {
-                                                      Navigator.of(context)
-                                                          .pushAndRemoveUntil(
-                                                        PageRouteBuilder(
-                                                          settings: const RouteSettings(name: 'edit'),
-                                                          pageBuilder: (context,
-                                                              animation,
-                                                              secondaryAnimation) {
-                                                            return DiaryEditPage(
-                                                                key, '$title\n$gptTitle',
-                                                                '$text\n$gptText', images,true);
-                                                          },
-                                                          transitionsBuilder: (
-                                                              context,
-                                                              animation,
-                                                              secondaryAnimation,
-                                                              child) {
-                                                            const Offset begin = Offset(
-                                                                0.0, 1.0); // 下から上
-                                                            // final Offset begin = Offset(0.0, -1.0); // 上から下
-                                                            const Offset end = Offset
-                                                                .zero;
-                                                            final Animatable<
-                                                                Offset> tween = Tween(
-                                                                begin: begin,
-                                                                end: end)
-                                                                .chain(CurveTween(
-                                                                curve: Curves
-                                                                    .easeInOut));
-                                                            final Animation<
-                                                                Offset> offsetAnimation = animation
-                                                                .drive(tween);
-                                                            return SlideTransition(
-                                                              position: offsetAnimation,
-                                                              child: child,
-                                                            );
-                                                          },
-                                                          transitionDuration: const Duration(
-                                                              milliseconds: 300),
-                                                        ),
-                                                            (Route<dynamic> route) {
-                                                          if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
-                                                            return true;
-                                                          }
-                                                          return false;
-                                                        },
-                                                      );
-                                                    }
-                                                  },
-                                                      ref.watch(
-                                                          fontIndexProvider));
+        child: Scaffold(
+            body:
+            Container(
+              height: deviceHeight,
+              color: ref.watch(theme1Provider),
+              child: Column(
+                  children: [
+                    Expanded(
+                        child: SingleChildScrollView(
+                            child: Column(
+                                children: [
+                                  CustomScrollView(
+                                      shrinkWrap: true,
+                                      primary: false,
+                                      slivers: [
+                                        SliverAppBar(
+                                          backgroundColor: Colors.blueAccent
+                                              .withOpacity(0.3),
+                                          floating: true,
+                                          pinned: true,
+                                          snap: false,
+                                          expandedHeight: appBarHeight,
+                                          toolbarHeight: appBarHeight,
+                                          leading: IconButton(
+                                            icon: const Icon(Icons.close),
+                                            color: ref.watch(
+                                                appBarTitleColorProvider),
+                                            onPressed: () {
+                                              if (changed) {
+                                                showDialog<void>(
+                                                    context: context,
+                                                    builder: (_) {
+                                                      return AlertGPTBack(
+                                                          key, () {
+                                                        gptTitle =
+                                                            controller0.text;
+                                                        gptText =
+                                                            controller1.text;
+                                                        if (isRe) {
+                                                          Navigator.of(context)
+                                                              .pushAndRemoveUntil(
+                                                            PageRouteBuilder(
+                                                              settings: const RouteSettings(
+                                                                  name: 'edit'),
+                                                              pageBuilder: (
+                                                                  context,
+                                                                  animation,
+                                                                  secondaryAnimation) {
+                                                                return DiaryReEditPage(
+                                                                    key,
+                                                                    '$title\n$gptTitle',
+                                                                    '$text\n$gptText',
+                                                                    images,
+                                                                    true,
+                                                                    '',
+                                                                    '$text\n$gptText',
+                                                                    '$title\n$gptTitle');
+                                                              },
+                                                              transitionsBuilder: (
+                                                                  context,
+                                                                  animation,
+                                                                  secondaryAnimation,
+                                                                  child) {
+                                                                const Offset begin = Offset(
+                                                                    0.0,
+                                                                    1.0); // 下から上
+                                                                // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                                                const Offset end = Offset
+                                                                    .zero;
+                                                                final Animatable<
+                                                                    Offset> tween = Tween(
+                                                                    begin: begin,
+                                                                    end: end)
+                                                                    .chain(
+                                                                    CurveTween(
+                                                                        curve: Curves
+                                                                            .easeInOut));
+                                                                final Animation<
+                                                                    Offset> offsetAnimation = animation
+                                                                    .drive(
+                                                                    tween);
+                                                                return SlideTransition(
+                                                                  position: offsetAnimation,
+                                                                  child: child,
+                                                                );
+                                                              },
+                                                              transitionDuration: const Duration(
+                                                                  milliseconds: 300),
+                                                            ),
+                                                                (Route<
+                                                                dynamic> route) {
+                                                              if (route.settings
+                                                                  .name !=
+                                                                  null && (route
+                                                                  .settings
+                                                                  .name! ==
+                                                                  'view' ||
+                                                                  route.settings
+                                                                      .name! ==
+                                                                      'book')) {
+                                                                return true;
+                                                              }
+                                                              return false;
+                                                            },
+                                                          );
+                                                        } else {
+                                                          Navigator.of(context)
+                                                              .pushAndRemoveUntil(
+                                                            PageRouteBuilder(
+                                                              settings: const RouteSettings(
+                                                                  name: 'edit'),
+                                                              pageBuilder: (
+                                                                  context,
+                                                                  animation,
+                                                                  secondaryAnimation) {
+                                                                return DiaryEditPage(
+                                                                    key,
+                                                                    '$title\n$gptTitle',
+                                                                    '$text\n$gptText',
+                                                                    images,
+                                                                    true,
+                                                                    '',
+                                                                    '$text\n$gptText',
+                                                                    '$title\n$gptTitle');
+                                                              },
+                                                              transitionsBuilder: (
+                                                                  context,
+                                                                  animation,
+                                                                  secondaryAnimation,
+                                                                  child) {
+                                                                const Offset begin = Offset(
+                                                                    0.0,
+                                                                    1.0); // 下から上
+                                                                // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                                                const Offset end = Offset
+                                                                    .zero;
+                                                                final Animatable<
+                                                                    Offset> tween = Tween(
+                                                                    begin: begin,
+                                                                    end: end)
+                                                                    .chain(
+                                                                    CurveTween(
+                                                                        curve: Curves
+                                                                            .easeInOut));
+                                                                final Animation<
+                                                                    Offset> offsetAnimation = animation
+                                                                    .drive(
+                                                                    tween);
+                                                                return SlideTransition(
+                                                                  position: offsetAnimation,
+                                                                  child: child,
+                                                                );
+                                                              },
+                                                              transitionDuration: const Duration(
+                                                                  milliseconds: 300),
+                                                            ),
+                                                                (Route<
+                                                                dynamic> route) {
+                                                              if (route.settings
+                                                                  .name !=
+                                                                  null && (route
+                                                                  .settings
+                                                                  .name! ==
+                                                                  'view' ||
+                                                                  route.settings
+                                                                      .name! ==
+                                                                      'book')) {
+                                                                return true;
+                                                              }
+                                                              return false;
+                                                            },
+                                                          );
+                                                        }
+                                                      },
+                                                          ref.watch(
+                                                              fontIndexProvider));
+                                                    });
+                                              } else {
+                                                Navigator.of(context).pop();
+                                              }
+                                            },
+                                          ),
+                                          flexibleSpace: FlexibleSpaceBar(
+                                            title: Text(
+                                                '${textString?.auto_diary}',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: ref.watch(
+                                                      appBarTitleColorProvider),
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight
+                                                      .w400,
+                                                  fontFamily: 'f${ref.watch(
+                                                      fontIndexProvider)}',)),
+                                            background: SizedBox(
+                                              width: double.infinity,
+                                              child:
+                                              File(ref.watch(appBarImagePath))
+                                                  .existsSync()
+                                                  ? Image.file(
+                                                File(
+                                                    ref.watch(appBarImagePath)),
+                                                fit: BoxFit.cover,)
+                                                  : Image.asset(
+                                                ref.watch(
+                                                    appBarImageDefaultPath),
+                                                fit: BoxFit.cover,),
+                                            ),
+                                          ),
+                                        )
+                                      ]
+                                  ),
+                                  const SizedBox(height: 20,),
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    margin: const EdgeInsets.only(
+                                        left: 32,
+                                        right: 32,
+                                        bottom: 10,
+                                        top: 15),
+                                    child: Theme(data: Theme.of(context)
+                                        .copyWith(
+                                      textSelectionTheme: TextSelectionThemeData(
+                                          cursorColor: ref.watch(
+                                              theme6Provider),
+                                          selectionColor: ref.watch(
+                                              theme6Provider),
+                                          selectionHandleColor: ref.watch(
+                                              theme6Provider)),
+                                    ),
+                                        child: TextFormField(
+                                          autofocus: true,
+                                          cursorColor: ref.watch(
+                                              theme6Provider),
+                                          maxLines: null,
+                                          controller: messageController,
+                                          keyboardType: TextInputType.multiline,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: '${textString
+                                                ?.auto_diary_desc}',
+                                            hintMaxLines: 8,
+                                            hintStyle: TextStyle(
+                                                color: ref.watch(theme5Provider)
+                                                    .withOpacity(0.6)
+                                            ),
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: ref.watch(
+                                                fontSizeDiaryProvider) *
+                                                1.0,
+                                            fontFamily: 'f${ref.watch(
+                                                fontIndexProvider)}',
+                                            fontWeight: FontWeight.w400,
+                                            color: ref.watch(theme5Provider),
+                                          ),
+                                          onChanged: (s) {
+                                            changed = true;
+                                            ref
+                                                .watch(
+                                                gptInputProvider.notifier)
+                                                .state = s;
+                                          },
+                                        )
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: ref.watch(
+                                          theme2Provider),
+                                      backgroundColor: ref.watch(
+                                          theme6Provider),
+                                      shape: const StadiumBorder(),
+                                    ),
+                                    onPressed: isWaiting.value
+                                        ? null
+                                        : () async {
+                                      if (messageController.text.isEmpty) {
+                                        Fluttertoast.cancel();
+                                        Fluttertoast.showToast(
+                                          msg: '${textString?.empty}',
+                                          toastLength: Toast.LENGTH_SHORT,
+                                        );
+                                      } else {
+                                        if (rewardCount == 0) {
+                                          if (ref.watch(adLoadedProvider)) {
+                                            rewardedAd.show(
+                                                onUserEarnedReward: (
+                                                    AdWithoutView ad,
+                                                    RewardItem rewardItem) {
+                                                  EmptyState.loadAd(ref);
+                                                  rewardCount +=
+                                                      rewardItem.amount.toInt();
                                                 });
-                                          }else {
-                                            Navigator.of(context).pop();
+                                          } else {
+                                            EmptyState.loadAdAndShow((ad,
+                                                rewardItem) {
+                                              rewardCount +=
+                                                  rewardItem.amount.toInt();
+                                            }, textString, ref);
                                           }
-                                        },
-                                      ),
-                                      flexibleSpace: FlexibleSpaceBar(
-                                        title: Text('${textString?.auto_diary}',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: ref.watch(
-                                                  appBarTitleColorProvider),
-                                              fontSize: 24,
-                                              fontWeight: FontWeight
-                                                  .w400,
-                                              fontFamily: 'f${ref.watch(
-                                                  fontIndexProvider)}',)),
-                                        background: SizedBox(
-                                          width: double.infinity,
-                                          child:
-                                          File(ref.watch(appBarImagePath))
-                                              .existsSync()
-                                              ? Image.file(
-                                            File(ref.watch(appBarImagePath)),
-                                            fit: BoxFit.cover,)
-                                              : Image.asset(
-                                            ref.watch(appBarImageDefaultPath),
-                                            fit: BoxFit.cover,),
-                                        ),
-                                      ),
-                                    )
-                                  ]
-                              ),
-                              const SizedBox(height: 20,),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                margin: const EdgeInsets.only(
-                                    left: 32, right: 32, bottom: 10, top: 15),
-                                child: Theme(data: Theme.of(context).copyWith(
-                                  textSelectionTheme: TextSelectionThemeData(
-                                      cursorColor: ref.watch(theme6Provider),
-                                      selectionColor: ref.watch(theme6Provider),
-                                      selectionHandleColor: ref.watch(
-                                          theme6Provider)),
-                                ),
-                                    child: TextFormField(
-                                      autofocus: true,
-                                      cursorColor: ref.watch(theme6Provider),
-                                      maxLines: null,
-                                      controller: messageController,
-                                      keyboardType: TextInputType.multiline,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: '${textString
-                                            ?.auto_diary_desc}',
-                                        hintMaxLines: 8,
-                                        hintStyle: TextStyle(
-                                            color: ref.watch(theme5Provider)
-                                                .withOpacity(0.6)
-                                        ),
-                                      ),
+                                        }
+                                        rewardCount--;
+                                        isWaiting.value = true;
+                                        print('Template$template');
+                                        await ref.read(
+                                            messagesProvider.notifier)
+                                            .sendMessage(template);
+                                        isWaiting.value = false;
+                                      }
+                                    },
+                                    child: Text('${textString?.gpt_write}',
+                                        style: TextStyle(
+                                            color: ref.watch(theme3Provider))),
+                                  ),
+                                  Text('${textString?.gpt_write_ad}',
                                       style: TextStyle(
-                                        fontSize: ref.watch(
-                                            fontSizeDiaryProvider) *
-                                            1.0,
-                                        fontFamily: 'f${ref.watch(
-                                            fontIndexProvider)}',
-                                        fontWeight: FontWeight.w400,
-                                        color: ref.watch(theme5Provider),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'f${ref.watch(
+                                              fontIndexProvider)}',
+                                          color: ref.watch(theme3Provider))),
+                                  const SizedBox(height: 10,),
+                                  if (isWaiting.value)
+                                    IconButton(
+                                      onPressed: null,
+                                      icon: SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          color: ref.watch(theme6Provider),),
                                       ),
-                                      onChanged: (s) {
-                                        changed=true;
-                                        ref
-                                            .watch(gptInputProvider.notifier)
-                                            .state = s;
-                                      },
-                                    )
-                                ),
-                              ),
+                                    ),
+                                  Divider(
+                                    color: ref.watch(theme6Provider),
+                                    thickness: 3,
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    margin: const EdgeInsets.only(
+                                        left: 32,
+                                        right: 32,
+                                        bottom: 10,
+                                        top: 15),
+                                    child: Theme(data: Theme.of(context)
+                                        .copyWith(
+                                      textSelectionTheme: TextSelectionThemeData(
+                                          cursorColor: ref.watch(
+                                              theme6Provider),
+                                          selectionColor: ref.watch(
+                                              theme6Provider),
+                                          selectionHandleColor: ref.watch(
+                                              theme6Provider)),
+                                    ),
+                                        child: TextFormField(
+                                            autofocus: false,
+                                            readOnly: true,
+                                            cursorColor: ref.watch(
+                                                theme6Provider),
+                                            maxLines: null,
+                                            controller: controller0,
+                                            keyboardType: TextInputType
+                                                .multiline,
+                                            decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                hintText: '${textString
+                                                    ?.title_hint}',
+                                                hintStyle: TextStyle(
+                                                    color: ref.watch(
+                                                        theme5Provider)
+                                                        .withOpacity(0.6))
+                                            ),
+                                            style: TextStyle(
+                                              fontSize: ref.watch(
+                                                  fontSizeDiaryProvider) *
+                                                  1.0,
+                                              fontFamily: 'f${ref.watch(
+                                                  fontIndexProvider)}',
+                                              fontWeight: FontWeight.w400,
+                                              color: ref.watch(theme5Provider),
+                                            ),
+                                            onChanged: (String s) {
+
+                                            }
+                                        )),
+                                  ),
+                                  Divider(
+                                    color: ref.watch(theme2Provider),
+                                    indent: 32,
+                                    endIndent: 32,
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 32,
+                                        right: 32,
+                                        bottom: 35,
+                                        top: 10),
+                                    alignment: Alignment.centerLeft,
+                                    child: Theme(
+                                        data: ThemeData(
+                                          textSelectionTheme: TextSelectionThemeData(
+                                              selectionColor: ref.watch(
+                                                  theme6Provider)),
+                                          colorSchemeSeed: ref.watch(
+                                              theme6Provider),
+                                        ),
+                                        child: TextFormField(
+                                          autofocus: true,
+                                          readOnly: true,
+                                          cursorColor: ref.watch(
+                                              theme6Provider),
+                                          keyboardType: TextInputType.multiline,
+                                          controller: controller1,
+                                          maxLines: null,
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: '${textString
+                                                  ?.text_hint}',
+                                              hintStyle: TextStyle(
+                                                  color: ref.watch(
+                                                      theme5Provider)
+                                                      .withOpacity(0.6))
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: ref.watch(
+                                                fontSizeDiaryProvider) *
+                                                1.0,
+                                            fontFamily: 'f${ref.watch(
+                                                fontIndexProvider)}',
+                                            fontWeight: FontWeight.w400,
+                                            color: ref.watch(theme5Provider),
+                                          ),
+                                          onChanged: (String s) {
+
+                                          },
+                                        )),
+                                  ),
+                                ]
+                            )
+                        )),
+                    Container(
+                        color: ref.watch(theme2Provider),
+                        width: deviceWidth,
+                        child: Row(
+                            children: [
+                              const Expanded(child: SizedBox(height: 10,)),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: ref.watch(theme2Provider),
                                   backgroundColor: ref.watch(theme6Provider),
                                   shape: const StadiumBorder(),
                                 ),
-                                onPressed:isWaiting.value?null: () async {
-                                  if (messageController.text.isEmpty) {
-                                    Fluttertoast.cancel();
-                                    Fluttertoast.showToast(
-                                      msg: '${textString?.empty}',
-                                      toastLength: Toast.LENGTH_SHORT,
-                                    );
-                                  } else {
-                                    if (rewardCount == 0) {
-                                      if (ref.watch(adLoadedProvider)) {
-                                        rewardedAd.show(onUserEarnedReward: (
-                                            AdWithoutView ad,
-                                            RewardItem rewardItem) {
-                                          EmptyState.loadAd(ref);
-                                          rewardCount +=
-                                              rewardItem.amount.toInt();
-                                        });
-                                      } else {
-                                        EmptyState.loadAdAndShow((ad,
-                                            rewardItem) {
-                                          rewardCount +=
-                                              rewardItem.amount.toInt();
-                                        }, textString, ref);
-                                      }
-                                    }
-                                    rewardCount--;
-                                    isWaiting.value = true;
-                                    print('Template$template');
-                                    await ref.read(messagesProvider.notifier)
-                                        .sendMessage(template);
-                                    isWaiting.value = false;
-                                  }
-                                },
-                                child: Text('${textString?.gpt_write}',
-                                    style: TextStyle(
-                                        color: ref.watch(theme3Provider))),
-                              ),
-                              Text('${textString?.gpt_write_ad}',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily:'f${ref.watch(fontIndexProvider)}',
-                                      color: ref.watch(theme3Provider))),
-                              const SizedBox(height: 10,),
-                              if (isWaiting.value)
-                               IconButton(
-                                  onPressed: null,
-                                  icon: SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(color: ref.watch(theme6Provider),),
-                                  ),
-                                ),
-                              Divider(
-                                color: ref.watch(theme6Provider),
-                                thickness: 3,
-                              ),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                margin: const EdgeInsets.only(
-                                    left: 32, right: 32, bottom: 10, top: 15),
-                                child: Theme(data: Theme.of(context).copyWith(
-                                  textSelectionTheme: TextSelectionThemeData(
-                                      cursorColor: ref.watch(theme6Provider),
-                                      selectionColor: ref.watch(theme6Provider),
-                                      selectionHandleColor: ref.watch(
-                                          theme6Provider)),
-                                ),
-                                    child: TextFormField(
-                                      autofocus: false,
-                                      readOnly: true,
-                                      cursorColor: ref.watch(theme6Provider),
-                                      maxLines: null,
-                                      controller: controller0,
-                                      keyboardType: TextInputType.multiline,
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: '${textString?.title_hint}',
-                                          hintStyle: TextStyle(
-                                              color: ref.watch(theme5Provider)
-                                                  .withOpacity(0.6))
-                                      ),
-                                      style: TextStyle(
-                                        fontSize: ref.watch(
-                                            fontSizeDiaryProvider) *
-                                            1.0,
-                                        fontFamily: 'f${ref.watch(
-                                            fontIndexProvider)}',
-                                        fontWeight: FontWeight.w400,
-                                        color: ref.watch(theme5Provider),
-                                      ),
-                                      onChanged: (String s) {
-
-                                      }
-                                    )),
-                              ),
-                              Divider(
-                                color: ref.watch(theme2Provider),
-                                indent: 32,
-                                endIndent: 32,
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                    left: 32, right: 32, bottom: 35, top: 10),
-                                alignment: Alignment.centerLeft,
-                                child: Theme(
-                                    data: ThemeData(
-                                      textSelectionTheme: TextSelectionThemeData(
-                                          selectionColor: ref.watch(
-                                              theme6Provider)),
-                                      colorSchemeSeed: ref.watch(
-                                          theme6Provider),
-                                    ),
-                                    child: TextFormField(
-                                      autofocus: true,
-                                      readOnly: true,
-                                      cursorColor: ref.watch(theme6Provider),
-                                      keyboardType: TextInputType.multiline,
-                                      controller: controller1,
-                                      maxLines: null,
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: '${textString?.text_hint}',
-                                          hintStyle: TextStyle(
-                                              color: ref.watch(theme5Provider)
-                                                  .withOpacity(0.6))
-                                      ),
-                                      style: TextStyle(
-                                        fontSize: ref.watch(
-                                            fontSizeDiaryProvider) *
-                                            1.0,
-                                        fontFamily: 'f${ref.watch(
-                                            fontIndexProvider)}',
-                                        fontWeight: FontWeight.w400,
-                                        color: ref.watch(theme5Provider),
-                                      ),
-                                      onChanged: (String s) {
-
-                                      },
-                                    )),
-                              ),
-                            ]
-                        )
-                    )),
-                Container(
-                    color: ref.watch(theme2Provider),
-                    width: deviceWidth,
-                    child: Row(
-                        children: [
-                          const Expanded(child: SizedBox(height: 10,)),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: ref.watch(theme2Provider),
-                              backgroundColor: ref.watch(theme6Provider),
-                              shape: const StadiumBorder(),
-                            ),
-                            onPressed: () {
-                              showDialog<void>(
-                                  context: context,
-                                  builder: (_) {
-                                    return AlertReplace(key,
-                                            () {
-                                              gptTitle=controller0.text;
-                                              gptText=controller1.text;
+                                onPressed: () {
+                                  showDialog<void>(
+                                      context: context,
+                                      builder: (_) {
+                                        return AlertReplace(key,
+                                                () {
+                                              gptTitle = controller0.text;
+                                              gptText = controller1.text;
                                               if (isRe) {
                                                 Navigator.of(context)
                                                     .pushAndRemoveUntil(
-                                                    PageRouteBuilder(
-                                                      settings: const RouteSettings(name: 'edit'),
-                                                      pageBuilder: (context,
-                                                          animation,
-                                                          secondaryAnimation) {
-                                                        return DiaryReEditPage(
-                                                            key, gptTitle,
-                                                            gptText,images,true);
-                                                      },
-                                                      transitionsBuilder: (
-                                                          context,
-                                                          animation,
-                                                          secondaryAnimation,
-                                                          child) {
-                                                        const Offset begin = Offset(
-                                                            0.0, 1.0); // 下から上
-                                                        // final Offset begin = Offset(0.0, -1.0); // 上から下
-                                                        const Offset end = Offset
-                                                            .zero;
-                                                        final Animatable<
-                                                            Offset> tween = Tween(
-                                                            begin: begin,
-                                                            end: end)
-                                                            .chain(CurveTween(
-                                                            curve: Curves
-                                                                .easeInOut));
-                                                        final Animation<
-                                                            Offset> offsetAnimation = animation
-                                                            .drive(tween);
-                                                        return SlideTransition(
-                                                          position: offsetAnimation,
-                                                          child: child,
-                                                        );
-                                                      },
-                                                      transitionDuration: const Duration(
-                                                          milliseconds: 300),
-                                                    ),
+                                                  PageRouteBuilder(
+                                                    settings: const RouteSettings(
+                                                        name: 'edit'),
+                                                    pageBuilder: (context,
+                                                        animation,
+                                                        secondaryAnimation) {
+                                                      return DiaryReEditPage(
+                                                          key,
+                                                          gptTitle,
+                                                          gptText,
+                                                          images,
+                                                          true,
+                                                          '',
+                                                          gptText,
+                                                          gptTitle);
+                                                    },
+                                                    transitionsBuilder: (
+                                                        context,
+                                                        animation,
+                                                        secondaryAnimation,
+                                                        child) {
+                                                      const Offset begin = Offset(
+                                                          0.0, 1.0); // 下から上
+                                                      // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                                      const Offset end = Offset
+                                                          .zero;
+                                                      final Animatable<
+                                                          Offset> tween = Tween(
+                                                          begin: begin,
+                                                          end: end)
+                                                          .chain(CurveTween(
+                                                          curve: Curves
+                                                              .easeInOut));
+                                                      final Animation<
+                                                          Offset> offsetAnimation = animation
+                                                          .drive(tween);
+                                                      return SlideTransition(
+                                                        position: offsetAnimation,
+                                                        child: child,
+                                                      );
+                                                    },
+                                                    transitionDuration: const Duration(
+                                                        milliseconds: 300),
+                                                  ),
                                                       (Route<dynamic> route) {
-                                                        if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
-                                                          return true;
-                                                        }
-                                                        return false;
-                                                      },
+                                                    if (route.settings.name !=
+                                                        null &&
+                                                        (route.settings.name! ==
+                                                            'view' ||
+                                                            route.settings
+                                                                .name! ==
+                                                                'book')) {
+                                                      return true;
+                                                    }
+                                                    return false;
+                                                  },
                                                 );
                                               } else {
                                                 Navigator.of(context)
                                                     .pushAndRemoveUntil(
-                                                    PageRouteBuilder(
-                                                      settings: const RouteSettings(name: 'edit'),
-                                                      pageBuilder: (context,
-                                                          animation,
-                                                          secondaryAnimation) {
-                                                        return DiaryEditPage(
-                                                            key, gptTitle,
-                                                            gptText,images,true);
-                                                      },
-                                                      transitionsBuilder: (
-                                                          context,
-                                                          animation,
-                                                          secondaryAnimation,
-                                                          child) {
-                                                        const Offset begin = Offset(
-                                                            0.0, 1.0); // 下から上
-                                                        // final Offset begin = Offset(0.0, -1.0); // 上から下
-                                                        const Offset end = Offset
-                                                            .zero;
-                                                        final Animatable<
-                                                            Offset> tween = Tween(
-                                                            begin: begin,
-                                                            end: end)
-                                                            .chain(CurveTween(
-                                                            curve: Curves
-                                                                .easeInOut));
-                                                        final Animation<
-                                                            Offset> offsetAnimation = animation
-                                                            .drive(tween);
-                                                        return SlideTransition(
-                                                          position: offsetAnimation,
-                                                          child: child,
-                                                        );
-                                                      },
-                                                      transitionDuration: const Duration(
-                                                          milliseconds: 300),
-                                                    ),
+                                                  PageRouteBuilder(
+                                                    settings: const RouteSettings(
+                                                        name: 'edit'),
+                                                    pageBuilder: (context,
+                                                        animation,
+                                                        secondaryAnimation) {
+                                                      return DiaryEditPage(
+                                                          key,
+                                                          gptTitle,
+                                                          gptText,
+                                                          images,
+                                                          true,
+                                                          '',
+                                                          gptText,
+                                                          gptTitle);
+                                                    },
+                                                    transitionsBuilder: (
+                                                        context,
+                                                        animation,
+                                                        secondaryAnimation,
+                                                        child) {
+                                                      const Offset begin = Offset(
+                                                          0.0, 1.0); // 下から上
+                                                      // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                                      const Offset end = Offset
+                                                          .zero;
+                                                      final Animatable<
+                                                          Offset> tween = Tween(
+                                                          begin: begin,
+                                                          end: end)
+                                                          .chain(CurveTween(
+                                                          curve: Curves
+                                                              .easeInOut));
+                                                      final Animation<
+                                                          Offset> offsetAnimation = animation
+                                                          .drive(tween);
+                                                      return SlideTransition(
+                                                        position: offsetAnimation,
+                                                        child: child,
+                                                      );
+                                                    },
+                                                    transitionDuration: const Duration(
+                                                        milliseconds: 300),
+                                                  ),
                                                       (Route<dynamic> route) {
-                                                    if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
+                                                    if (route.settings.name !=
+                                                        null &&
+                                                        (route.settings.name! ==
+                                                            'view' ||
+                                                            route.settings
+                                                                .name! ==
+                                                                'book')) {
                                                       return true;
                                                     }
                                                     return false;
@@ -735,129 +858,172 @@ ${ref.watch(gptInputProvider)}''';
                                                 );
                                               }
                                             },
-                                        ref.watch(
-                                            fontIndexProvider));
-                                  });
-                            },
-                            child: Text('${textString?.replace}',
-                                style: TextStyle(
-                                    color: ref.watch(theme3Provider))),
-                          ),
-                          const SizedBox(width: 15,),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: ref.watch(theme2Provider),
-                              backgroundColor: ref.watch(theme6Provider),
-                              shape: const StadiumBorder(),
-                            ),
-                            onPressed: () {
-                              gptTitle=controller0.text;
-                              gptText=controller1.text;
-                              if (isRe) {
-                                Navigator.of(context)
-                                    .pushAndRemoveUntil(
-                                    PageRouteBuilder(
-                                      settings: const RouteSettings(name: 'edit'),
-                                      pageBuilder: (context,
-                                          animation,
-                                          secondaryAnimation) {
-                                        return DiaryReEditPage(
-                                            key,'$title\n$gptTitle',
-                                            '$text\n$gptText',images,true);
+                                            ref.watch(
+                                                fontIndexProvider));
+                                      });
+                                },
+                                child: Text('${textString?.replace}',
+                                    style: TextStyle(
+                                        color: ref.watch(theme3Provider))),
+                              ),
+                              const SizedBox(width: 15,),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: ref.watch(theme2Provider),
+                                  backgroundColor: ref.watch(theme6Provider),
+                                  shape: const StadiumBorder(),
+                                ),
+                                onPressed: () {
+                                  gptTitle = controller0.text;
+                                  gptText = controller1.text;
+                                  if (isRe) {
+                                    Navigator.of(context)
+                                        .pushAndRemoveUntil(
+                                      PageRouteBuilder(
+                                        settings: const RouteSettings(
+                                            name: 'edit'),
+                                        pageBuilder: (context,
+                                            animation,
+                                            secondaryAnimation) {
+                                          return DiaryReEditPage(
+                                              key,
+                                              '$title\n$gptTitle',
+                                              '$text\n$gptText',
+                                              images,
+                                              true,
+                                              '',
+                                              gptText,
+                                              gptTitle);
+                                        },
+                                        transitionsBuilder: (context,
+                                            animation,
+                                            secondaryAnimation,
+                                            child) {
+                                          const Offset begin = Offset(
+                                              0.0, 1.0); // 下から上
+                                          // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                          const Offset end = Offset
+                                              .zero;
+                                          final Animatable<
+                                              Offset> tween = Tween(
+                                              begin: begin,
+                                              end: end)
+                                              .chain(CurveTween(
+                                              curve: Curves
+                                                  .easeInOut));
+                                          final Animation<
+                                              Offset> offsetAnimation = animation
+                                              .drive(tween);
+                                          return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child,
+                                          );
+                                        },
+                                        transitionDuration: const Duration(
+                                            milliseconds: 300),
+                                      ),
+                                          (Route<dynamic> route) {
+                                        if (route.settings.name != null &&
+                                            (route.settings.name! == 'view' ||
+                                                route.settings.name! ==
+                                                    'book')) {
+                                          return true;
+                                        }
+                                        return false;
                                       },
-                                      transitionsBuilder: (
-                                          context,
-                                          animation,
-                                          secondaryAnimation,
-                                          child) {
-                                        const Offset begin = Offset(
-                                            0.0, 1.0); // 下から上
-                                        // final Offset begin = Offset(0.0, -1.0); // 上から下
-                                        const Offset end = Offset
-                                            .zero;
-                                        final Animatable<
-                                            Offset> tween = Tween(
-                                            begin: begin,
-                                            end: end)
-                                            .chain(CurveTween(
-                                            curve: Curves
-                                                .easeInOut));
-                                        final Animation<
-                                            Offset> offsetAnimation = animation
-                                            .drive(tween);
-                                        return SlideTransition(
-                                          position: offsetAnimation,
-                                          child: child,
-                                        );
+                                    );
+                                  } else {
+                                    Navigator.of(context)
+                                        .pushAndRemoveUntil(
+                                      PageRouteBuilder(
+                                        settings: const RouteSettings(
+                                            name: 'edit'),
+                                        pageBuilder: (context,
+                                            animation,
+                                            secondaryAnimation) {
+                                          return DiaryEditPage(
+                                              key,
+                                              '$title\n$gptTitle',
+                                              '$text\n$gptText',
+                                              images,
+                                              true,
+                                              '',
+                                              '$text\n$gptText',
+                                              '$title\n$gptTitle');
+                                        },
+                                        transitionsBuilder: (context,
+                                            animation,
+                                            secondaryAnimation,
+                                            child) {
+                                          const Offset begin = Offset(
+                                              0.0, 1.0); // 下から上
+                                          // final Offset begin = Offset(0.0, -1.0); // 上から下
+                                          const Offset end = Offset
+                                              .zero;
+                                          final Animatable<
+                                              Offset> tween = Tween(
+                                              begin: begin,
+                                              end: end)
+                                              .chain(CurveTween(
+                                              curve: Curves
+                                                  .easeInOut));
+                                          final Animation<
+                                              Offset> offsetAnimation = animation
+                                              .drive(tween);
+                                          return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child,
+                                          );
+                                        },
+                                        transitionDuration: const Duration(
+                                            milliseconds: 300),
+                                      ),
+                                          (Route<dynamic> route) {
+                                        if (route.settings.name != null &&
+                                            (route.settings.name! == 'view' ||
+                                                route.settings.name! ==
+                                                    'book')) {
+                                          return true;
+                                        }
+                                        return false;
                                       },
-                                      transitionDuration: const Duration(
-                                          milliseconds: 300),
-                                    ),
-                                      (Route<dynamic> route) {
-                                    if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
-                                      return true;
-                                    }
-                                    return false;
-                                  },
-                                );
-                              } else {
-                                Navigator.of(context)
-                                    .pushAndRemoveUntil(
-                                    PageRouteBuilder(
-                                      settings: const RouteSettings(name: 'edit'),
-                                      pageBuilder: (context,
-                                          animation,
-                                          secondaryAnimation) {
-                                        return DiaryEditPage(
-                                            key, '$title\n$gptTitle',
-                                            '$text\n$gptText', images,true);
-                                      },
-                                      transitionsBuilder: (
-                                          context,
-                                          animation,
-                                          secondaryAnimation,
-                                          child) {
-                                        const Offset begin = Offset(
-                                            0.0, 1.0); // 下から上
-                                        // final Offset begin = Offset(0.0, -1.0); // 上から下
-                                        const Offset end = Offset
-                                            .zero;
-                                        final Animatable<
-                                            Offset> tween = Tween(
-                                            begin: begin,
-                                            end: end)
-                                            .chain(CurveTween(
-                                            curve: Curves
-                                                .easeInOut));
-                                        final Animation<
-                                            Offset> offsetAnimation = animation
-                                            .drive(tween);
-                                        return SlideTransition(
-                                          position: offsetAnimation,
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration: const Duration(
-                                          milliseconds: 300),
-                                    ),
-                                      (Route<dynamic> route) {
-                                    if (route.settings.name != null && (route.settings.name! == 'view'||route.settings.name! == 'book')) {
-                                      return true;
-                                    }
-                                    return false;
-                                  },
-                                );
-                              }
-                            },
-                            child: Text('${textString?.add}',
-                                style: TextStyle(
-                                    color: ref.watch(theme3Provider))),
-                          ),
-                        ])
-                )
-              ]),
-        )
-    ));
+                                    );
+                                  }
+                                },
+                                child: Text('${textString?.add}',
+                                    style: TextStyle(
+                                        color: ref.watch(theme3Provider))),
+                              ),
+                            ])
+                    )
+                  ]),
+            )
+        ));
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.paused:
+        saveEditing();
+        break;
+      case AppLifecycleState.resumed:
+        break;
+    }
+  }
+
+  Future<void> saveEditing() async {
+    await prefs.setInt("e_index", index);
+
+    await prefs.setString("e_title", title);
+    await prefs.setString('e_text', text);
+    await prefs.setStringList('e_image',images );
+    await prefs.setInt('e_height', 80);
+    await prefs.setString('e_gpt', gptInitMessage);
+    await prefs.setString('e_gpt_text', gptText);
+    await prefs.setString('e_gpt_title', gptTitle);
   }
 
 

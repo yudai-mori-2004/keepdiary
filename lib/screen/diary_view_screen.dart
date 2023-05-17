@@ -31,6 +31,8 @@ class DiaryViewPage extends HookConsumerWidget {
         .size
         .width;
 
+
+
     return Scaffold(
         body:
         Container(
@@ -90,7 +92,8 @@ class DiaryViewPage extends HookConsumerWidget {
                                                         ref.watch(
                                                             currentDiaryProvider),
                                                         ref.watch(
-                                                            fontIndexProvider));
+                                                            fontIndexProvider), () =>
+                                                            removeEditing());
                                                   });
                                             }
                                         ),
@@ -103,11 +106,21 @@ class DiaryViewPage extends HookConsumerWidget {
                                                 context,
                                                 MaterialPageRoute(
                                                   settings: const RouteSettings(name: 'edit'),
-                                                    builder: (context) =>
-                                                        DiaryReEditPage(
-                                                            key,
-                                                            data.title[ref.watch(currentDiaryProvider)],
-                                                            data.text[ref.watch(currentDiaryProvider)],data.image[ref.watch(currentDiaryProvider)],false),),
+                                                    builder: (context) {
+                                                      return DiaryReEditPage(
+                                                          key,
+                                                          data.title[ref.watch(
+                                                              currentDiaryProvider)],
+                                                          data.text[ref.watch(
+                                                              currentDiaryProvider)],
+                                                          data.image[ref.watch(
+                                                              currentDiaryProvider)],
+                                                          false,
+                                                          '',
+                                                          '',
+                                                          '');
+                                                    }
+                                                  ,),
                                               ),
                                         ),
                                       ],
@@ -381,5 +394,17 @@ class DiaryViewPage extends HookConsumerWidget {
             ),
       ),
     );
+  }
+
+  Future<void> removeEditing() async {
+    await prefs.remove("e_index");
+
+    await prefs.remove("e_title");
+    await prefs.remove('e_text');
+    await prefs.remove('e_image');
+    await prefs.remove('e_height');
+    await prefs.remove("e_gpt");
+    await prefs.remove("e_gpt_text");
+    await prefs.remove("e_gpt_title");
   }
 }

@@ -202,7 +202,7 @@ class BookCoverPageState extends ConsumerState<BookCoverPage> {
                                                       secondaryAnimation) {
                                                     return DiaryEditPage(
                                                         null, '', '', const [],
-                                                        false);
+                                                        false,'','','');
                                                   },
                                                   transitionsBuilder: (context,
                                                       animation,

@@ -44,6 +44,8 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
   late String gptTitle;
   late String gptText;
 
+  bool isThisScreenEnable=true;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (DateTime
@@ -61,6 +63,7 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
     }
 
     final textString = AppLocalizations.of(context);
+
     final index = ref.watch(currentDiaryProvider);
     double deviceHeight = MediaQuery
         .of(context)
@@ -77,6 +80,8 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
     final controller1 = useTextEditingController();
     controller1.value = controller1.value.copyWith(text: e_text);
 
+    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     return WillPopScope(
         onWillPop: ()async {
@@ -98,6 +103,8 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                         );
                         dataBox.put(dataBoxName, data);
                         removeEditing();
+
+                        isThisScreenEnable=false;
                         Navigator.of(context)
                             .pushAndRemoveUntil(
                             PageRouteBuilder(
@@ -192,6 +199,8 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                               dataBoxName,
                                                               data);
                                                           removeEditing();
+
+                                                          isThisScreenEnable=false;
                                                           Navigator.of(context)
                                                               .pushAndRemoveUntil(
                                                               PageRouteBuilder(
@@ -241,6 +250,7 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                         fontIndexProvider));
                                               });
                                           }else{
+                                            isThisScreenEnable=false;
                                             Navigator.of(context).pop();
                                           }
                                         },
@@ -477,8 +487,8 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                           ),
                           const Expanded(child: SizedBox(height: 10,)),
                           IconButton(
-                              onPressed: ()async {
-                                await Navigator.of(context).push(
+                              onPressed: (){
+                                Navigator.of(context).push(
                                   PageRouteBuilder(
                                     pageBuilder: (context, animation,
                                         secondaryAnimation) {
@@ -536,6 +546,7 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                               dataBox.put(dataBoxName, data);
                               removeEditing();
 
+                              isThisScreenEnable=false;
                               Navigator.of(context).pushAndRemoveUntil(
                                   PageRouteBuilder(
                                     settings: const RouteSettings(name: 'book'),
@@ -648,6 +659,9 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
   }
 
   Future<void> saveEditing() async {
+    print("save executed!!1");
+    if( !isThisScreenEnable)return;
+    WidgetsBinding.instance.removeObserver(this);
     await prefs.setInt("e_index", -1);
 
     await prefs.setString("e_title", e_title);
@@ -657,6 +671,7 @@ class DiaryEditPage extends HookConsumerWidget with WidgetsBindingObserver {
   }
 
   Future<void> removeEditing() async {
+    WidgetsBinding.instance.removeObserver(this);
     await prefs.remove("e_index");
 
     await prefs.remove("e_title");

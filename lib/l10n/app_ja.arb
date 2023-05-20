@@ -60,7 +60,7 @@
   "backup_attention3": "バックアップデータは、端末のダウンロードフォルダーに保存されます",
   "backup_attention4": "バックアップデータはこのアプリのフォルダ内に保存されます",
   "backup_attention5": "バックアップ中です",
-  "backgpt": "上書きされますがよろしいですか？",
+  "backgpt": "日記に書き足しますか？",
   "backup_google": "Zip形式でバックアップをとる",
   "restore_google": "Zipファイルから日記を復元する",
   "restore": "復元",

@@ -3,18 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:keep_diary/custom_widget/comfirm_pass.dart';
-import 'package:keep_diary/screen/settings_screen.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import '../custom_widget/alert_dialog_quit.dart';
 import '../custom_widget/input_pass.dart';
 import '../helper/file_helper.dart';
 import '../main.dart';
-import 'diary_edit_screen.dart';
 import 'diary_view_screen.dart';
 
 var _itemScrollController = ItemScrollController();
@@ -117,7 +112,10 @@ class CalenderState extends ConsumerState<CalenderPage> {
     double statusBarHeight = MediaQuery
         .of(context)
         .padding
-        .top;
+        .top+MediaQuery
+        .of(context)
+        .padding
+        .bottom;
     const sidePadding = .0;
 
     return WillPopScope(child:
@@ -342,14 +340,14 @@ class CalenderState extends ConsumerState<CalenderPage> {
                                               10),),
                                         child: Row(
                                           children: [
-                                            const SizedBox(width: 40),
+                                            const SizedBox(width: 10),
                                             Flexible(child: Container(
                                                 child: _initialized
                                                     ? _searchListView(ref)
                                                     : _defaultListView(ref)
                                             ),
                                             ),
-                                            const SizedBox(width: 40),
+                                            const SizedBox(width: 10),
                                           ],
                                         ),
                                       ),
@@ -381,33 +379,6 @@ class CalenderState extends ConsumerState<CalenderPage> {
   }
 
 
-  Widget _searchTextField(WidgetRef ref) {
-    return TextField(
-      cursorColor: ref.watch(theme3Provider),
-      style: TextStyle(color: ref.watch(theme3Provider), fontSize: 16),
-      decoration: InputDecoration(
-        prefixIcon: Icon(
-          Icons.search, color: ref.watch(theme3Provider), size: 16,),
-        filled: true,
-        fillColor: ref.watch(theme2Provider),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding: const EdgeInsets.all(0),
-      ),
-      onChanged: (String text) {
-        ref.watch(searchIndexListProvider.notifier).state = [];
-        for (int i = 0; i < _wordList.length; i++) {
-          if (text == '' || _wordList[i].contains(text)) {
-            ref.watch(searchIndexListProvider.notifier).state.add(i); // 今回の問題はここ！！！
-          }
-        }
-      },
-    );
-  }
-
-
   Widget _searchListView(WidgetRef ref) {
     if(ref.watch(searchIndexListProvider).isEmpty){
       return Container();
@@ -434,7 +405,6 @@ class CalenderState extends ConsumerState<CalenderPage> {
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                       image: FileImage(
-                        //  File('/data/user/0/com.forestocean.keepdiary/app_flutter/appBar/images (6).jpg'),
                           File(data.image[index][0])
                       ),
                       colorFilter: ColorFilter.mode(
@@ -511,7 +481,6 @@ class CalenderState extends ConsumerState<CalenderPage> {
 
 
   Widget _defaultListView(WidgetRef ref) {
-    print("default");
     if (!_initialized) {
       ref
           .watch(searchIndexListProvider.notifier)

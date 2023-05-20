@@ -45,12 +45,19 @@ class Messages extends _$Messages {
 }
 
 
-class HomeScreen extends HookConsumerWidget  {
+class HomeScreen extends HookConsumerWidget with WidgetsBindingObserver{
   HomeScreen(Key? key,this.title,this.text,this.images,this.isRe,this.gptInitMessage) : super(key: key) {
     gptTitle = title;
     gptText = text;
-    messageController.value=messageController.value.copyWith(text: gptInitMessage);
-    messagesProvider=messagesProvider = AutoDisposeNotifierProvider<Messages,
+    prefs.setString('e_gpt_text',text);
+    prefs.setString('e_gpt_title',title);
+    prefs.setBool("e_gpt_editing", true);
+
+    if(gptInitMessage.isNotEmpty) {
+      changed = true;
+    }
+
+    messagesProvider = messagesProvider = AutoDisposeNotifierProvider<Messages,
         List<OpenAIChatCompletionChoiceMessageModel>>.internal(
       Messages.new,
       name: r'messagesProvider',
@@ -67,8 +74,6 @@ class HomeScreen extends HookConsumerWidget  {
   String gptTitle='';
   String gptText='';
   int index=0;
-
-  final messageController = useTextEditingController();
   String gptInitMessage='';
 
   bool changed=false;
@@ -77,9 +82,11 @@ class HomeScreen extends HookConsumerWidget  {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textString = AppLocalizations.of(context);
+final   messageController=useTextEditingController();
     final controller0 = useTextEditingController();
     final controller1 = useTextEditingController();
     selfIntroduce = ref.watch(gptIntroduce);
+
     var message = ref
         .watch(messagesProvider)
         .isNotEmpty ? ref
@@ -117,6 +124,7 @@ class HomeScreen extends HookConsumerWidget  {
       controller1.value =
           controller1.value.copyWith(text: gptText);
     }
+    messageController.value=messageController.value.copyWith(text: gptInitMessage);
 
     double deviceHeight = MediaQuery
         .of(context)
@@ -159,6 +167,7 @@ ${ref.watch(gptInputProvider)}''';
                     gptTitle = controller0.text;
                     gptText = controller1.text;
                     if (isRe) {
+                      prefs.setBool("e_gpt_editing", false);
                       Navigator.of(context)
                           .pushAndRemoveUntil(
                         PageRouteBuilder(
@@ -173,8 +182,8 @@ ${ref.watch(gptInputProvider)}''';
                                 images,
                                 true,
                                 '',
-                                '$text\n$gptText',
-                                '$title\n$gptTitle');
+                                '',
+                                '');
                           },
                           transitionsBuilder: (context,
                               animation,
@@ -213,6 +222,7 @@ ${ref.watch(gptInputProvider)}''';
                         },
                       );
                     } else {
+                      prefs.setBool("e_gpt_editing", false);
                       Navigator.of(context)
                           .pushAndRemoveUntil(
                         PageRouteBuilder(
@@ -227,8 +237,8 @@ ${ref.watch(gptInputProvider)}''';
                                 images,
                                 true,
                                 '',
-                                '$text\n$gptText',
-                                '$title\n$gptTitle');
+                                '',
+                                '');
                           },
                           transitionsBuilder: (context,
                               animation,
@@ -272,6 +282,7 @@ ${ref.watch(gptInputProvider)}''';
                           fontIndexProvider));
                 });
           } else {
+            prefs.setBool("e_gpt_editing", false);
             Navigator.of(context).pop();
           }
           return true;
@@ -315,6 +326,7 @@ ${ref.watch(gptInputProvider)}''';
                                                         gptText =
                                                             controller1.text;
                                                         if (isRe) {
+                                                          prefs.setBool("e_gpt_editing", false);
                                                           Navigator.of(context)
                                                               .pushAndRemoveUntil(
                                                             PageRouteBuilder(
@@ -331,8 +343,8 @@ ${ref.watch(gptInputProvider)}''';
                                                                     images,
                                                                     true,
                                                                     '',
-                                                                    '$text\n$gptText',
-                                                                    '$title\n$gptTitle');
+                                                                    '',
+                                                                    '');
                                                               },
                                                               transitionsBuilder: (
                                                                   context,
@@ -382,6 +394,7 @@ ${ref.watch(gptInputProvider)}''';
                                                             },
                                                           );
                                                         } else {
+                                                          prefs.setBool("e_gpt_editing", false);
                                                           Navigator.of(context)
                                                               .pushAndRemoveUntil(
                                                             PageRouteBuilder(
@@ -398,8 +411,8 @@ ${ref.watch(gptInputProvider)}''';
                                                                     images,
                                                                     true,
                                                                     '',
-                                                                    '$text\n$gptText',
-                                                                    '$title\n$gptTitle');
+                                                                    '',
+                                                                    '');
                                                               },
                                                               transitionsBuilder: (
                                                                   context,
@@ -454,6 +467,7 @@ ${ref.watch(gptInputProvider)}''';
                                                               fontIndexProvider));
                                                     });
                                               } else {
+                                                prefs.setBool("e_gpt_editing", false);
                                                 Navigator.of(context).pop();
                                               }
                                             },
@@ -534,6 +548,8 @@ ${ref.watch(gptInputProvider)}''';
                                           ),
                                           onChanged: (s) {
                                             changed = true;
+                                            prefs.setString('e_gpt',s);
+                                            gptInitMessage=s;
                                             ref
                                                 .watch(
                                                 gptInputProvider.notifier)
@@ -658,7 +674,7 @@ ${ref.watch(gptInputProvider)}''';
                                               color: ref.watch(theme5Provider),
                                             ),
                                             onChanged: (String s) {
-
+                                              prefs.setString('e_gpt_title',s);
                                             }
                                         )),
                                   ),
@@ -709,7 +725,7 @@ ${ref.watch(gptInputProvider)}''';
                                             color: ref.watch(theme5Provider),
                                           ),
                                           onChanged: (String s) {
-
+                                            prefs.setString('e_gpt_text',s);
                                           },
                                         )),
                                   ),
@@ -737,6 +753,7 @@ ${ref.watch(gptInputProvider)}''';
                                               gptTitle = controller0.text;
                                               gptText = controller1.text;
                                               if (isRe) {
+                                                prefs.setBool("e_gpt_editing", false);
                                                 Navigator.of(context)
                                                     .pushAndRemoveUntil(
                                                   PageRouteBuilder(
@@ -752,8 +769,8 @@ ${ref.watch(gptInputProvider)}''';
                                                           images,
                                                           true,
                                                           '',
-                                                          gptText,
-                                                          gptTitle);
+                                                          '',
+                                                          '');
                                                     },
                                                     transitionsBuilder: (
                                                         context,
@@ -797,6 +814,7 @@ ${ref.watch(gptInputProvider)}''';
                                                   },
                                                 );
                                               } else {
+                                                prefs.setBool("e_gpt_editing", false);
                                                 Navigator.of(context)
                                                     .pushAndRemoveUntil(
                                                   PageRouteBuilder(
@@ -812,8 +830,8 @@ ${ref.watch(gptInputProvider)}''';
                                                           images,
                                                           true,
                                                           '',
-                                                          gptText,
-                                                          gptTitle);
+                                                          '',
+                                                          '');
                                                     },
                                                     transitionsBuilder: (
                                                         context,
@@ -877,6 +895,7 @@ ${ref.watch(gptInputProvider)}''';
                                   gptTitle = controller0.text;
                                   gptText = controller1.text;
                                   if (isRe) {
+                                    prefs.setBool("e_gpt_editing", false);
                                     Navigator.of(context)
                                         .pushAndRemoveUntil(
                                       PageRouteBuilder(
@@ -892,8 +911,8 @@ ${ref.watch(gptInputProvider)}''';
                                               images,
                                               true,
                                               '',
-                                              gptText,
-                                              gptTitle);
+                                              '',
+                                              '');
                                         },
                                         transitionsBuilder: (context,
                                             animation,
@@ -933,6 +952,7 @@ ${ref.watch(gptInputProvider)}''';
                                       },
                                     );
                                   } else {
+                                    prefs.setBool("e_gpt_editing", false);
                                     Navigator.of(context)
                                         .pushAndRemoveUntil(
                                       PageRouteBuilder(
@@ -948,8 +968,8 @@ ${ref.watch(gptInputProvider)}''';
                                               images,
                                               true,
                                               '',
-                                              '$text\n$gptText',
-                                              '$title\n$gptTitle');
+                                              '',
+                                              '');
                                         },
                                         transitionsBuilder: (context,
                                             animation,
@@ -1001,30 +1021,7 @@ ${ref.watch(gptInputProvider)}''';
         ));
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.detached:
-      case AppLifecycleState.paused:
-        saveEditing();
-        break;
-      case AppLifecycleState.resumed:
-        break;
-    }
-  }
 
-  Future<void> saveEditing() async {
-    await prefs.setInt("e_index", index);
-
-    await prefs.setString("e_title", title);
-    await prefs.setString('e_text', text);
-    await prefs.setStringList('e_image',images );
-    await prefs.setInt('e_height', 80);
-    await prefs.setString('e_gpt', gptInitMessage);
-    await prefs.setString('e_gpt_text', gptText);
-    await prefs.setString('e_gpt_title', gptTitle);
-  }
 
 
   static const isoLangs = {

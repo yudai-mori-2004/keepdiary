@@ -8,8 +8,11 @@ import 'package:keep_diary/screen/settings_screen.dart';
 import 'bookcover_screen.dart';
 import 'diary_edit_screen.dart';
 import 'diary_re_edit_screen.dart';
+import 'gpt_input.dart';
 
 class HomePage extends ConsumerStatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -20,14 +23,13 @@ class _HomePageState extends ConsumerState<HomePage> {
 
 // 表示する Widget の一覧
   static final List<Widget> _pageList = [
-    BookCoverPage(),
-    CalenderPage(),
-    SettingsPage()
+    const BookCoverPage(),
+    const CalenderPage(),
+    const SettingsPage()
   ];
 
   @override
   Widget build(BuildContext context) {
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       int eInd = (prefs.getInt('e_index') ?? -10);
       var lst = prefs.getStringList('e_image') ?? [];
@@ -51,34 +53,24 @@ class _HomePageState extends ConsumerState<HomePage> {
                   prefs.getString('e_gpt') ?? '',
                   prefs.getString('e_gpt_text') ?? '',
                   prefs.getString('e_gpt_title') ?? '');
-            },
-            transitionsBuilder: (context,
-                animation,
-                secondaryAnimation,
-                child) {
-              const Offset begin = Offset(
-                  0.0, 1.0); // 下から上
-              // final Offset begin = Offset(0.0, -1.0); // 上から下
-              const Offset end = Offset
-                  .zero;
-              final Animatable<
-                  Offset> tween = Tween(
-                  begin: begin, end: end)
-                  .chain(CurveTween(
-                  curve: Curves
-                      .easeInOut));
-              final Animation<
-                  Offset> offsetAnimation = animation
-                  .drive(tween);
-              return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
-            },
-            transitionDuration: const Duration(
-                milliseconds: 300),
-          ),
+            },)
         );
+        if(prefs.getBool("e_gpt_editing")??false) {
+          Navigator.of(context).push(
+            PageRouteBuilder(
+                pageBuilder: (context, animation,
+                    secondaryAnimation) {
+                  return HomeScreen(
+                    null,
+                    prefs.getString('e_gpt_title') ?? '',
+                    prefs.getString('e_gpt_text') ?? '',
+                    lst,
+                    true,
+                    prefs.getString('e_gpt') ?? '',
+                  );
+                }),
+          );
+        }
       } else {
         ref
             .watch(currentDiaryProvider.notifier)
@@ -101,14 +93,32 @@ class _HomePageState extends ConsumerState<HomePage> {
             ,),
         );
       }
+      if(prefs.getBool("e_gpt_editing")??false) {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+              pageBuilder: (context, animation,
+                  secondaryAnimation) {
+                return HomeScreen(
+                  null,
+                  prefs.getString('e_gpt_title') ?? '',
+                  prefs.getString('e_gpt_text') ?? '',
+                  lst,
+                  true,
+                  prefs.getString('e_gpt') ?? '',
+                );
+              }),
+        );
+      }
     });
 
     return Scaffold(
       body: _pageList[_selectedIndex],
       bottomNavigationBar: SizedBox(
-        height: appBarHeight,
+
         child: BottomNavigationBar(
           backgroundColor:  ref.watch(theme1Provider),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
         items:  <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home,color: ref.watch(theme3Provider),),

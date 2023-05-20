@@ -85,8 +85,9 @@ class EmptyState extends ConsumerState<EmptyPage> {
     required int hour,
     required int minutes,
     required message,
+    required AppLocalizations? textString
   }) async {
-    final textString = AppLocalizations.of(context);
+
     final TZDateTime now = TZDateTime.now(local);
     for (int i = 0; i < 10; i++) {
       TZDateTime scheduledDate = TZDateTime(
@@ -94,6 +95,9 @@ class EmptyState extends ConsumerState<EmptyPage> {
         now.year,
         now.month,
         now.day + i,
+        // now.hour,
+        // now.minute,
+        // now.second+5
         hour,
         minutes,
       );
@@ -110,7 +114,7 @@ class EmptyState extends ConsumerState<EmptyPage> {
               'channel id $i',
               'channel name $i',
               importance: Importance.defaultImportance,
-              priority: Priority.high,
+              priority: Priority.max,
               ongoing: true,
               styleInformation: BigTextStyleInformation(message),
               icon: 'diary_icon',
@@ -131,7 +135,6 @@ class EmptyState extends ConsumerState<EmptyPage> {
 
   @override
   void dispose() {
-    //WidgetsBinding.instance.removeObserver(this as WidgetsBindingObserver);
     super.dispose();
   }
 
@@ -211,7 +214,7 @@ class EmptyState extends ConsumerState<EmptyPage> {
                 builder: (context) {
                   return valid
                       ? FirstInputPassword(password: password)
-                      : HomePage();
+                      : const HomePage();
                 }
             )
         );
@@ -224,6 +227,7 @@ class EmptyState extends ConsumerState<EmptyPage> {
           hour: ref.watch(notificationTimeProvider),
           minutes: 0,
           message: '${textString?.restore_yourself}',
+          textString: textString
         );
       }
     });

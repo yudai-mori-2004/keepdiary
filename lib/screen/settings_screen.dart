@@ -43,7 +43,10 @@ class SettingsPage extends HookConsumerWidget {
     double statusBarHeight = MediaQuery
         .of(context)
         .padding
-        .top;
+        .top+MediaQuery
+        .of(context)
+        .padding
+        .bottom;
 
     return WillPopScope(
       child: Scaffold(

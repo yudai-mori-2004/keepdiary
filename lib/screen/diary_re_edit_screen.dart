@@ -1,22 +1,15 @@
-import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:keep_diary/custom_widget/gallary_photo.dart';
-import 'package:keep_diary/screen/bookcover_screen.dart';
 import 'package:keep_diary/screen/gpt_input.dart';
-import 'package:keep_diary/structure/data_structure.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import '../custom_widget/alert_dialog.dart';
 import '../custom_widget/alert_dialog_re_back.dart';
-import '../custom_widget/custom_carousel.dart';
 import '../helper/file_helper.dart';
 import '../main.dart';
-import '../screen/settings_screen.dart';
 import 'home_page.dart';
 
 
@@ -32,6 +25,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
   String gptTitle='';
   String gptText='';
   List<String>images=[];
+  bool isThisScreenEnable=true;
 
 
   @override
@@ -71,6 +65,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                         dataBox.put(dataBoxName, data);
                         removeEditing();
 
+                        isThisScreenEnable=false;
                         Navigator.of(context)
                             .pushAndRemoveUntil(
                           PageRouteBuilder(
@@ -78,7 +73,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                             pageBuilder: (context,
                                 animation,
                                 secondaryAnimation) {
-                              return HomePage();
+                              return const HomePage();
                             },
                             transitionsBuilder: (context,
                                 animation,
@@ -159,7 +154,9 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                             dataBox.put(
                                                                 dataBoxName,
                                                                 data);
-                                                            removeEditing();
+                                                           removeEditing();
+
+                                                            isThisScreenEnable=false;
                                                             Navigator.of(
                                                                 context)
                                                                 .pushAndRemoveUntil(
@@ -170,7 +167,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                                       context,
                                                                       animation,
                                                                       secondaryAnimation) {
-                                                                    return HomePage();
+                                                                    return const HomePage();
                                                                   },
                                                                   transitionsBuilder: (
                                                                       context,
@@ -210,6 +207,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                               fontIndexProvider));
                                                     });
                                               } else {
+                                                isThisScreenEnable=false;
                                                 Navigator.of(context).pop();
                                               }
                                             },
@@ -254,7 +252,7 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                                                 currentDiaryProvider),
                                                             ref.watch(
                                                                 fontIndexProvider),
-                                                            (){
+                                                            () {
                                                           removeEditing();
                                                             });
                                                       });
@@ -388,7 +386,6 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                             color: ref.watch(theme5Provider),
                                           ),
                                           onChanged: (String s) {
-                                            print('re_edit');
                                             text = s;
                                             isChanged = true;
                                           },
@@ -472,8 +469,8 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                               ),
                               const Expanded(child: SizedBox(height: 10,)),
                               IconButton(
-                                  onPressed: () async {
-                                    await Navigator.of(context).push(
+                                  onPressed: () {
+                                     Navigator.of(context).push(
                                       PageRouteBuilder(
                                         pageBuilder: (context, animation,
                                             secondaryAnimation) {
@@ -516,20 +513,21 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
                                   backgroundColor: ref.watch(theme6Provider),
                                   shape: const StadiumBorder(),
                                 ),
-                                onPressed: () {
+                                onPressed: ()  {
                                   data.title[index] = title;
                                   data.text[index] = text;
                                   data.image[index] = images;
                                   dataBox.put(dataBoxName, data);
                                   removeEditing();
 
+                                  isThisScreenEnable=false;
                                   Navigator.of(context).pushAndRemoveUntil(
                                       PageRouteBuilder(
                                         settings: const RouteSettings(
                                             name: 'book'),
                                         pageBuilder: (context, animation,
                                             secondaryAnimation) {
-                                          return HomePage();
+                                          return const HomePage();
                                         },
                                         transitionsBuilder: (context,
                                             animation,
@@ -633,17 +631,18 @@ class DiaryReEditPage extends HookConsumerWidget with WidgetsBindingObserver {
 
 
   Future<void> saveEditing() async {
+    if (!isThisScreenEnable) return;
+    WidgetsBinding.instance.removeObserver(this);
     await prefs.setInt("e_index", index);
-
     await prefs.setString("e_title", title);
     await prefs.setString('e_text', text);
-    await prefs.setStringList('e_image',images );
+    await prefs.setStringList('e_image', images);
     await prefs.setInt('e_height', 80);
   }
 
   Future<void> removeEditing() async {
+    WidgetsBinding.instance.removeObserver(this);
     await prefs.remove("e_index");
-
     await prefs.remove("e_title");
     await prefs.remove('e_text');
     await prefs.remove('e_image');

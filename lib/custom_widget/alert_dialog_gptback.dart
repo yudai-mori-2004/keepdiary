@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:keep_diary/main.dart';
 
 
 class AlertGPTBack extends StatelessWidget {
@@ -24,6 +25,7 @@ class AlertGPTBack extends StatelessWidget {
         GestureDetector(
           child: Text('  ${textString?.no}',style: TextStyle(fontSize: 14,fontFamily: 'f$font'),),
           onTap: () {
+            prefs.setBool("e_gpt_editing", false);
             Navigator.pop(context);
             Navigator.pop(context);
           },

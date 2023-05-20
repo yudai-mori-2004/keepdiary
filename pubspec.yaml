@@ -30,7 +30,7 @@ dependencies:
     sdk: flutter
   intl: ^0.17.0
   country_picker: ^2.0.20
-  flutter_local_notifications: ^14.0.0+1
+  flutter_local_notifications: ^14.1.0
   flutter_native_timezone: ^2.0.0
   flutter_email_sender: ^5.2.0
   path_provider: ^2.0.14
@@ -57,7 +57,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icon/diary_icon.png"
+  image_path: "assets/icon/diary_icon_ios.png"
 
 flutter:
   uses-material-design: true

@@ -1,17 +1,14 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:keep_diary/custom_widget/alert_dialog.dart';
 import 'package:keep_diary/custom_widget/gallary_photo.dart';
 import 'package:keep_diary/screen/diary_re_edit_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import '../custom_widget/custom_carousel.dart';
 import '../helper/file_helper.dart';
 import '../main.dart';
-import '../screen/settings_screen.dart';
 
 
 class DiaryViewPage extends HookConsumerWidget {
@@ -92,8 +89,8 @@ class DiaryViewPage extends HookConsumerWidget {
                                                         ref.watch(
                                                             currentDiaryProvider),
                                                         ref.watch(
-                                                            fontIndexProvider), () =>
-                                                            removeEditing());
+                                                            fontIndexProvider),
+                                                            () {});
                                                   });
                                             }
                                         ),
@@ -394,17 +391,5 @@ class DiaryViewPage extends HookConsumerWidget {
             ),
       ),
     );
-  }
-
-  Future<void> removeEditing() async {
-    await prefs.remove("e_index");
-
-    await prefs.remove("e_title");
-    await prefs.remove('e_text');
-    await prefs.remove('e_image');
-    await prefs.remove('e_height');
-    await prefs.remove("e_gpt");
-    await prefs.remove("e_gpt_text");
-    await prefs.remove("e_gpt_title");
   }
 }
